@@ -1,0 +1,9 @@
+.title {
+  text-align: center;
+  margin: 50px;
+  font-size: 100px;
+  font-weight: bold;
+}
+.search-col {
+  background-color: #fcc;
+}
