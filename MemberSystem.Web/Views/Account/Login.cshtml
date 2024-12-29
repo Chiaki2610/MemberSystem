@@ -1,0 +1,52 @@
+﻿@using MemberSystem.Web.ViewModels
+@model AccountViewModel
+
+@section topCSS
+{
+    <link href="~/css/login.css" rel="stylesheet" />
+}
+
+<div class="container px-5">
+    <div class="row">
+        <!-- 左邊欄位 -->
+        <div class="login-container">
+            <h2>登入</h2>
+            <form id="loginForm" asp-controller="Account" asp-action="Login" method="post">
+                <div class="form-group mb-3">
+                    <input asp-for="LoginViewModel.UserName" class="form-control" id="emailInput" placeholder="帳號" />
+                    <span asp-validation-for="LoginViewModel.UserName" id="emailError" class="text-danger mb-3"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <input asp-for="LoginViewModel.Password" class="form-control" id="passwordInput" type="password" placeholder="密碼" />
+                    <span asp-validation-for="LoginViewModel.Password" id="passwordError" class="text-danger"></span>
+                </div>
+                <div class="form-group" hidden>
+                    <label asp-for="LoginViewModel.ReturnUrl"></label>
+                    <input asp-for="LoginViewModel.ReturnUrl" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-custom">登入</button>
+            </form>
+            <hr>
+            <h2>還不是會員？</h2>
+            <a asp-controller="Account" asp-action="Register" class="register">註冊會員</a>
+        </div>
+    </div>
+</div>
+
+@section endJS
+{
+    <script src="~/js/login.js"></script>
+    <script>
+        const toastType = '@TempData["ToastType"]';
+        const toastMessage = '@Html.Raw(TempData["ToastMessage"])';
+
+        if (toastMessage) {
+            Swal.fire({
+                icon: toastType,
+                title: toastType === 'success' ? '成功！' : '失敗！',
+                text: toastMessage
+            });
+        }
+    </script>
+}

@@ -1,0 +1,14 @@
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\bin\Debug\net8.0\MemberSystem.ApplicationCore.deps.json
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\bin\Debug\net8.0\MemberSystem.ApplicationCore.runtimeconfig.json
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\bin\Debug\net8.0\MemberSystem.ApplicationCore.dll
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\bin\Debug\net8.0\MemberSystem.ApplicationCore.pdb
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\obj\Debug\net8.0\MemberSystem.ApplicationCore.csproj.AssemblyReference.cache
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\obj\Debug\net8.0\MemberSystem.ApplicationCore.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\obj\Debug\net8.0\MemberSystem.ApplicationCore.AssemblyInfoInputs.cache
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\obj\Debug\net8.0\MemberSystem.ApplicationCore.AssemblyInfo.cs
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\obj\Debug\net8.0\MemberSystem.ApplicationCore.csproj.CoreCompileInputs.cache
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\obj\Debug\net8.0\MemberSystem.ApplicationCore.dll
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\obj\Debug\net8.0\refint\MemberSystem.ApplicationCore.dll
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\obj\Debug\net8.0\MemberSystem.ApplicationCore.pdb
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\obj\Debug\net8.0\MemberSystem.ApplicationCore.genruntimeconfig.cache
+C:\Users\dark0\Desktop\SideProjects\MemberSystem\MemberSystem.ApplicationCore\obj\Debug\net8.0\ref\MemberSystem.ApplicationCore.dll
