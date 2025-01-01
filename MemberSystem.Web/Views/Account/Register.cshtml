@@ -1,0 +1,109 @@
+﻿@using MemberSystem.Web.ViewModels
+@model RegisterViewModel
+
+@section topCSS
+{
+    <link href="~/css/register.css" rel="stylesheet" />
+}
+
+<div class="container px-5">
+    <div class="row">
+        <div class="register-container">
+            <h2 class="text-center mb-4">註冊</h2>
+            <form asp-controller="Account" asp-action="Register" method="post">
+                <div class="mb-3">
+                    <input asp-for="UserName" class="form-control" placeholder="帳號" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <input asp-for="Password" class="form-control" placeholder="密碼" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <input asp-for="ConfirmPassword" class="form-control" placeholder="確認密碼" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <input asp-for="Email" class="form-control" placeholder="信箱" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <input asp-for="FullName" class="form-control" placeholder="姓名" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <input asp-for="PhoneNumber" class="form-control" placeholder="手機號碼" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <div class="form-floating mb-3">
+                        <input type="date" asp-for="DateOfBirth" class="form-control" placeholder="生日" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                        <label for="dateOfBirth" class="lh-floating-label">生日</label>
+                        <span id="dateOfBirth-error" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="form-floating mb-3">
+                        <div class="d-flex align-items-center form-control" style="height: calc(3.5rem + 2px);">
+                            <div class="form-check me-3">
+                                <input asp-for="BloodType"
+                                       class="form-check-input"
+                                       type="radio"
+                                       id="bloodA"
+                                       value="A"/>
+                                <label class="form-check-label" for="bloodA">A型</label>
+                            </div>
+                            <div class="form-check me-3">
+                                <input asp-for="BloodType"
+                                       class="form-check-input"
+                                       type="radio"
+                                       id="bloodB"
+                                       value="B" />
+                                <label class="form-check-label" for="bloodB">B型</label>
+                            </div>
+                            <div class="form-check me-3">
+                                <input asp-for="BloodType"
+                                       class="form-check-input"
+                                       type="radio"
+                                       id="bloodO"
+                                       value="O" />
+                                <label class="form-check-label" for="bloodO">O型</label>
+                            </div>
+                            <div class="form-check me-3">
+                                <input asp-for="BloodType"
+                                       class="form-check-input"
+                                       type="radio"
+                                       id="bloodAB"
+                                       value="AB" />
+                                <label class="form-check-label" for="bloodAB">AB型</label>
+                            </div>
+                        </div>
+                        <label for="bloodType" class="lh-floating-label">血型</label>
+                        <span asp-validation-for="BloodType" class="text-danger"></span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-custom w-100">註冊</button>
+            </form>
+            <hr>
+            <h2>已經有帳號？</h2>
+            <a asp-controller="Account" asp-action="Login" class="login">登入</a>
+        </div>
+    </div>
+</div>
+
+@section endJS
+{
+    <script>
+        const toastType = '@TempData["ToastType"]';
+        const toastMessage = '@Html.Raw(TempData["ToastMessage"])';
+
+        if (toastMessage) {
+            Swal.fire({
+                icon: toastType,
+                title: toastType === 'success' ? '成功！' : '失敗！',
+                text: toastMessage
+            });
+        }
+    </script>
+}

@@ -1,0 +1,111 @@
+﻿@model CheckViewModel
+
+<div class="mb-3 d-flex">
+    <select id="filterStatus" class="form-select mx-1">
+        <option value="all">全部</option>
+        <option value="approved">通過</option>
+        <option value="rejected">駁回</option>
+    </select>
+    <button id="resetFilter" class="btn btn-secondary">重置</button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">會員ID</th>
+            <th scope="col">帳號</th>
+            <th scope="col">姓名</th>
+            <th scope="col">信箱</th>
+            <th scope="col">身份</th>
+            <th scope="col">狀態</th>
+            <th scope="col">詳細資訊</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.CheckList != null && Model.CheckList.Any())
+        {
+            @for (var i = 0; i < Model.CheckList.Count; i++)
+            {
+                <tr data-status="@(Model.CheckList[i].IsApproved == true ? "approved" : "rejected")">
+                    <th scope="row">@Model.CheckList[i].MemberId</th>
+                    <td>@Model.CheckList[i].UserName</td>
+                    <td>@Model.CheckList[i].FullName</td>
+                    <td>@Model.CheckList[i].Email</td>
+                    <td>@(Model.CheckList[i].RoleId == 1 ? "管理者" : "一般會員")</td>
+                    <td>@(Model.CheckList[i].IsApproved == true ? "通過" : "駁回")</td>
+                    <td>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#memberModal"
+                                data-username="@Model.CheckList[i].UserName"
+                                data-fullname="@Model.CheckList[i].FullName"
+                                data-email="@Model.CheckList[i].Email"
+                                data-dateOfBirth="@Model.CheckList[i].DateOfBirth.ToString("yyyy-MM-dd")"
+                                data-phone="@Model.CheckList[i].PhoneNumber"
+                                data-bloodtype="@Model.CheckList[i].BloodType">
+                            檢視
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<nav class="mb-5">
+    <ul class="pagination">
+        @if (ViewData["CurrentPage"] != null && ViewData["TotalPages"] != null)
+        {
+            var currentPage = (int)ViewData["CurrentPage"];
+            var totalPages = (int)ViewData["TotalPages"];
+
+            if (currentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = currentPage - 1 })">上一頁</a>
+                </li>
+            }
+
+            for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                </li>
+            }
+
+            if (currentPage < totalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = currentPage + 1 })">下一頁</a>
+                </li>
+            }
+        }
+    </ul>
+</nav>
+
+<!-- Modal -->
+<div class="modal fade" id="memberModal" tabindex="-1" aria-labelledby="memberModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="memberModalLabel">會員詳細資料</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>帳號：</strong><span id="modal-username"></span></p>
+                <p><strong>姓名：</strong><span id="modal-fullname"></span></p>
+                <p><strong>信箱：</strong><span id="modal-email"></span></p>
+                <p><strong>生日：</strong><span id="modal-dateOfBirth"></span></p>
+                <p><strong>電話：</strong><span id="modal-phone"></span></p>
+                <p><strong>血型：</strong><span id="modal-bloodtype"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section endJS
+{
+    <script src="~/js/admin-index.js"></script>
+}

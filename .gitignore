@@ -1,0 +1,19 @@
+# 忽略 bin 和 obj 資料夾
+bin/
+obj/
+
+# 忽略 DLL 檔案
+*.dll
+
+# 忽略組件和編譯過程相關的檔案
+*.exe
+*.pdb
+*.log
+
+# 忽略 Visual Studio 編輯器檔案
+*.user
+*.suo
+
+# 忽略發行包和建置目錄
+dist/
+publish/
