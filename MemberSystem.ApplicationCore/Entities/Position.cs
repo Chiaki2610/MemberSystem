@@ -14,4 +14,6 @@ public partial class Position
     public virtual ICollection<ApprovalFlow> ApprovalFlows { get; set; } = new List<ApprovalFlow>();
 
     public virtual ICollection<MemberDepartment> MemberDepartments { get; set; } = new List<MemberDepartment>();
+
+    public virtual ICollection<Permission> Permissions { get; set; } = new List<Permission>();
 }

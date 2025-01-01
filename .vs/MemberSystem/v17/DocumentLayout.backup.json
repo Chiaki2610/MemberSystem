@@ -3,8 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\dark0\\Desktop\\SideProjects\\MemberSystem\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{64A0CE80-4D9B-4CD0-9B46-A7EFE2C1BF98}|MemberSystem.ApplicationCore\\MemberSystem.ApplicationCore.csproj|c:\\users\\dark0\\desktop\\sideprojects\\membersystem\\membersystem.applicationcore\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{64A0CE80-4D9B-4CD0-9B46-A7EFE2C1BF98}|MemberSystem.ApplicationCore\\MemberSystem.ApplicationCore.csproj|solutionrelative:membersystem.applicationcore\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7F58C617-B516-4A23-B52A-877AFC95009A}|MemberSystem.Web\\MemberSystem.Web.csproj|c:\\users\\dark0\\desktop\\sideprojects\\membersystem\\membersystem.web\\viewmodels\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7F58C617-B516-4A23-B52A-877AFC95009A}|MemberSystem.Web\\MemberSystem.Web.csproj|solutionrelative:membersystem.web\\viewmodels\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7F58C617-B516-4A23-B52A-877AFC95009A}|MemberSystem.Web\\MemberSystem.Web.csproj|c:\\users\\dark0\\desktop\\sideprojects\\membersystem\\membersystem.web\\views\\shared\\components\\navbar\\default.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{7F58C617-B516-4A23-B52A-877AFC95009A}|MemberSystem.Web\\MemberSystem.Web.csproj|solutionrelative:membersystem.web\\views\\shared\\components\\navbar\\default.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7F58C617-B516-4A23-B52A-877AFC95009A}|MemberSystem.Web\\MemberSystem.Web.csproj|c:\\users\\dark0\\desktop\\sideprojects\\membersystem\\membersystem.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7F58C617-B516-4A23-B52A-877AFC95009A}|MemberSystem.Web\\MemberSystem.Web.csproj|solutionrelative:membersystem.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7F58C617-B516-4A23-B52A-877AFC95009A}|MemberSystem.Web\\MemberSystem.Web.csproj|c:\\users\\dark0\\desktop\\sideprojects\\membersystem\\membersystem.web\\authorization\\approvedandrolerequirement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7F58C617-B516-4A23-B52A-877AFC95009A}|MemberSystem.Web\\MemberSystem.Web.csproj|solutionrelative:membersystem.web\\authorization\\approvedandrolerequirement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -79,14 +91,53 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "UserService.cs",
-              "DocumentMoniker": "C:\\Users\\dark0\\Desktop\\SideProjects\\MemberSystem\\MemberSystem.ApplicationCore\\Services\\UserService.cs",
-              "RelativeDocumentMoniker": "MemberSystem.ApplicationCore\\Services\\UserService.cs",
-              "ToolTip": "C:\\Users\\dark0\\Desktop\\SideProjects\\MemberSystem\\MemberSystem.ApplicationCore\\Services\\UserService.cs",
-              "RelativeToolTip": "MemberSystem.ApplicationCore\\Services\\UserService.cs",
-              "ViewState": "AgIAAIMAAAAAAAAAAAAwwJEAAAAZAAAAAAAAAA==",
+              "Title": "RegisterViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\dark0\\Desktop\\SideProjects\\MemberSystem\\MemberSystem.Web\\ViewModels\\RegisterViewModel.cs",
+              "RelativeDocumentMoniker": "MemberSystem.Web\\ViewModels\\RegisterViewModel.cs",
+              "ToolTip": "C:\\Users\\dark0\\Desktop\\SideProjects\\MemberSystem\\MemberSystem.Web\\ViewModels\\RegisterViewModel.cs",
+              "RelativeToolTip": "MemberSystem.Web\\ViewModels\\RegisterViewModel.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAA4wAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-30T06:12:07.79Z",
+              "WhenOpened": "2024-12-30T06:43:37.843Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Default.cshtml",
+              "DocumentMoniker": "C:\\Users\\dark0\\Desktop\\SideProjects\\MemberSystem\\MemberSystem.Web\\Views\\Shared\\Components\\Navbar\\Default.cshtml",
+              "RelativeDocumentMoniker": "MemberSystem.Web\\Views\\Shared\\Components\\Navbar\\Default.cshtml",
+              "ToolTip": "C:\\Users\\dark0\\Desktop\\SideProjects\\MemberSystem\\MemberSystem.Web\\Views\\Shared\\Components\\Navbar\\Default.cshtml",
+              "RelativeToolTip": "MemberSystem.Web\\Views\\Shared\\Components\\Navbar\\Default.cshtml",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-12-30T06:39:45.38Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\dark0\\Desktop\\SideProjects\\MemberSystem\\MemberSystem.Web\\Program.cs",
+              "RelativeDocumentMoniker": "MemberSystem.Web\\Program.cs",
+              "ToolTip": "C:\\Users\\dark0\\Desktop\\SideProjects\\MemberSystem\\MemberSystem.Web\\Program.cs",
+              "RelativeToolTip": "MemberSystem.Web\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-30T06:39:15.96Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ApprovedAndRoleRequirement.cs",
+              "DocumentMoniker": "C:\\Users\\dark0\\Desktop\\SideProjects\\MemberSystem\\MemberSystem.Web\\Authorization\\ApprovedAndRoleRequirement.cs",
+              "RelativeDocumentMoniker": "MemberSystem.Web\\Authorization\\ApprovedAndRoleRequirement.cs",
+              "ToolTip": "C:\\Users\\dark0\\Desktop\\SideProjects\\MemberSystem\\MemberSystem.Web\\Authorization\\ApprovedAndRoleRequirement.cs",
+              "RelativeToolTip": "MemberSystem.Web\\Authorization\\ApprovedAndRoleRequirement.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAA0wAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-30T06:39:05.323Z",
               "EditorCaption": ""
             }
           ]

@@ -16,8 +16,6 @@ public partial class MemberSystemContext : DbContext
     {
     }
 
-    public virtual DbSet<AccessLevel> AccessLevels { get; set; }
-
     public virtual DbSet<ApprovalFlow> ApprovalFlows { get; set; }
 
     public virtual DbSet<Department> Departments { get; set; }
@@ -44,7 +42,7 @@ public partial class MemberSystemContext : DbContext
 
     public virtual DbSet<Page> Pages { get; set; }
 
-    public virtual DbSet<PageAccess> PageAccesses { get; set; }
+    public virtual DbSet<Permission> Permissions { get; set; }
 
     public virtual DbSet<Position> Positions { get; set; }
 
@@ -55,12 +53,6 @@ public partial class MemberSystemContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<AccessLevel>(entity =>
-        {
-            entity.Property(e => e.Description).HasMaxLength(200);
-            entity.Property(e => e.LevelName).HasMaxLength(50);
-        });
-
         modelBuilder.Entity<ApprovalFlow>(entity =>
         {
             entity.HasKey(e => e.FlowId).HasName("PK__Approval__1184B35C51E3D1B4");
@@ -290,26 +282,15 @@ public partial class MemberSystemContext : DbContext
             entity.Property(e => e.PageName).HasMaxLength(50);
         });
 
-        modelBuilder.Entity<PageAccess>(entity =>
+        modelBuilder.Entity<Permission>(entity =>
         {
-            entity.HasKey(e => new { e.RoleId, e.PageId }).HasName("PK__PageAcce__D6AC95289DB87EAD");
+            entity.HasKey(e => e.PermissionId).HasName("PK__Permissi__EFA6FB0F093A3D10");
 
-            entity.ToTable("PageAccess");
+            entity.HasIndex(e => e.PermissionName, "UQ__Permissi__0FFDA3576A6385C4").IsUnique();
 
-            entity.HasOne(d => d.AccessLevel).WithMany(p => p.PageAccesses)
-                .HasForeignKey(d => d.AccessLevelId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__PageAcces__Acces__02FC7413");
-
-            entity.HasOne(d => d.Page).WithMany(p => p.PageAccesses)
-                .HasForeignKey(d => d.PageId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__PageAcces__PageI__02084FDA");
-
-            entity.HasOne(d => d.Role).WithMany(p => p.PageAccesses)
-                .HasForeignKey(d => d.RoleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__PageAcces__RoleI__01142BA1");
+            entity.Property(e => e.PermissionId).HasColumnName("PermissionID");
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.PermissionName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<Position>(entity =>
@@ -321,6 +302,25 @@ public partial class MemberSystemContext : DbContext
             entity.Property(e => e.PositionId).HasColumnName("PositionID");
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.PositionName).HasMaxLength(100);
+
+            entity.HasMany(d => d.Permissions).WithMany(p => p.Positions)
+                .UsingEntity<Dictionary<string, object>>(
+                    "PositionPermission",
+                    r => r.HasOne<Permission>().WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__PositionP__Permi__18B6AB08"),
+                    l => l.HasOne<Position>().WithMany()
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__PositionP__Posit__17C286CF"),
+                    j =>
+                    {
+                        j.HasKey("PositionId", "PermissionId").HasName("PK__Position__8E41F5E9459A71C6");
+                        j.ToTable("PositionPermissions");
+                        j.IndexerProperty<int>("PositionId").HasColumnName("PositionID");
+                        j.IndexerProperty<int>("PermissionId").HasColumnName("PermissionID");
+                    });
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -329,6 +329,25 @@ public partial class MemberSystemContext : DbContext
 
             entity.Property(e => e.Description).HasMaxLength(200);
             entity.Property(e => e.RoleName).HasMaxLength(50);
+
+            entity.HasMany(d => d.Permissions).WithMany(p => p.Roles)
+                .UsingEntity<Dictionary<string, object>>(
+                    "RolePermission",
+                    r => r.HasOne<Permission>().WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__RolePermi__Permi__14E61A24"),
+                    l => l.HasOne<Role>().WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__RolePermi__RoleI__13F1F5EB"),
+                    j =>
+                    {
+                        j.HasKey("RoleId", "PermissionId").HasName("PK__RolePerm__6400A18A02C2136A");
+                        j.ToTable("RolePermissions");
+                        j.IndexerProperty<int>("RoleId").HasColumnName("RoleID");
+                        j.IndexerProperty<int>("PermissionId").HasColumnName("PermissionID");
+                    });
         });
 
         OnModelCreatingPartial(modelBuilder);

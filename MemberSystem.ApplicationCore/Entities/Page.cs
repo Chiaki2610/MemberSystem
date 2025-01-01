@@ -10,6 +10,4 @@ public partial class Page
     public string PageName { get; set; } = null!;
 
     public string? Description { get; set; }
-
-    public virtual ICollection<PageAccess> PageAccesses { get; set; } = new List<PageAccess>();
 }
