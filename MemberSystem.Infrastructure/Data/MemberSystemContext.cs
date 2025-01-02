@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MemberSystem.ApplicationCore.Entities;
+using MemberSystem.ApplicationCore.EntityRelationships;
 using Microsoft.EntityFrameworkCore;
 
 namespace MemberSystem.Infrastructure.Data;
@@ -47,6 +48,10 @@ public partial class MemberSystemContext : DbContext
     public virtual DbSet<Position> Positions { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
+
+    public DbSet<RolePermission> RolePermissions { get; set; }
+
+    public DbSet<PositionPermission> PositionPermissions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=ConnectionStrings:MemberSystemContext");
@@ -289,8 +294,8 @@ public partial class MemberSystemContext : DbContext
             entity.HasIndex(e => e.PermissionName, "UQ__Permissi__0FFDA3576A6385C4").IsUnique();
 
             entity.Property(e => e.PermissionId).HasColumnName("PermissionID");
-            entity.Property(e => e.Description).HasMaxLength(255);
-            entity.Property(e => e.PermissionName).HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(200);
+            entity.Property(e => e.PermissionName).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Position>(entity =>
