@@ -1,4 +1,6 @@
-﻿namespace MemberSystem.Web.Controllers
+﻿using MemberSystem.ApplicationCore.Interfaces.Services;
+
+namespace MemberSystem.Web.Controllers
 {
     public class AccountController : Controller
     {

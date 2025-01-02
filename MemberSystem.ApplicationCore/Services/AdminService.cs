@@ -1,6 +1,7 @@
 ﻿using MemberSystem.ApplicationCore.Dtos;
 using MemberSystem.ApplicationCore.Entities;
 using MemberSystem.ApplicationCore.Interfaces;
+using MemberSystem.ApplicationCore.Interfaces.Services;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

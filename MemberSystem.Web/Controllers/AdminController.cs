@@ -1,4 +1,5 @@
 ﻿using MemberSystem.ApplicationCore.Entities;
+using MemberSystem.ApplicationCore.Interfaces.Services;
 using X.PagedList;
 
 namespace MemberSystem.Web.Controllers

@@ -2,6 +2,7 @@
 using MemberSystem.ApplicationCore.Entities;
 using MemberSystem.ApplicationCore.Enums;
 using MemberSystem.ApplicationCore.Interfaces;
+using MemberSystem.ApplicationCore.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;

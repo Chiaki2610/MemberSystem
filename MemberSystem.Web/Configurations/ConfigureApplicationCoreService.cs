@@ -1,4 +1,7 @@
-﻿namespace MemberSystem.Web.Configurations
+﻿using MemberSystem.ApplicationCore.Factories;
+using MemberSystem.ApplicationCore.Interfaces.Services;
+
+namespace MemberSystem.Web.Configurations
 {
     [Experimental("SKEXP0020")]
     public static class ConfigureApplicationCoreService
@@ -7,6 +10,9 @@
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAdminService, AdminService>();
+            services.AddScoped<IPermissionServiceFactory, PermissionServiceFactory>();
+            services.AddScoped<IPermissionService, RolePermissionService>();
+            services.AddScoped<IPermissionService, PositionPermissionService>();
 
             return services;
         }
