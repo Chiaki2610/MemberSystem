@@ -1,6 +1,8 @@
 ﻿using MemberSystem.ApplicationCore.EntityRelationships;
 using MemberSystem.ApplicationCore.Interfaces;
 using MemberSystem.ApplicationCore.Interfaces.Services;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MemberSystem.ApplicationCore.Services
@@ -19,6 +21,12 @@ namespace MemberSystem.ApplicationCore.Services
             return await _rolePermissionRepository.AnyAsync(rp =>
                 rp.RoleId == roleId &&
                 rp.Permission.PermissionName == permissionName);
+        }
+
+        public async Task<IEnumerable<string>> GetPermissionsByRoleAsync(int roleId)
+        {
+            var rolePermissions = await _rolePermissionRepository.ListAsync(x => x.RoleId == roleId);
+            return rolePermissions.Select(rp => rp.Permission.PermissionName);
         }
     }
 }

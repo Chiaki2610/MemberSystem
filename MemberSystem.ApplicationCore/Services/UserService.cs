@@ -7,21 +7,19 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace MemberSystem.ApplicationCore.Services
 {
     public class UserService : IUserService
     {
+        private readonly RolePermissionService _rolePermissionService;
         private readonly IRepository<Member> _memberRepository;
         private readonly ITransaction _transaction;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -30,12 +28,14 @@ namespace MemberSystem.ApplicationCore.Services
         public UserService(IRepository<Member> memberRepository,
                            ITransaction transaction,
                            IHttpContextAccessor httpContextAccessor,
-                           ILogger<UserService> logger)
+                           ILogger<UserService> logger,
+                           RolePermissionService rolePermissionService)
         {
             _memberRepository = memberRepository;
             _transaction = transaction;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _rolePermissionService = rolePermissionService;
         }
 
         /// <summary>
@@ -142,12 +142,15 @@ namespace MemberSystem.ApplicationCore.Services
         {
             var roleName = (model.RoleId == 1) ? "Admin" : "User";
 
+            var permissions = await _rolePermissionService.GetPermissionsByRoleAsync(model.RoleId);
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, model.FullName),
                 new Claim(ClaimTypes.NameIdentifier, model.MemberId.ToString()),
                 new Claim("IsApproved", model.IsApproved.HasValue && model.IsApproved.Value ? "true" : "false"),
-                new Claim(ClaimTypes.Role, roleName)
+                new Claim(ClaimTypes.Role, roleName),
+                new Claim("Permissions", string.Join(",", permissions))
             };
 
             var authProperties = new AuthenticationProperties

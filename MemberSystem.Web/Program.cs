@@ -1,3 +1,5 @@
+using MemberSystem.Web.Authorization.MemberSystem.ApplicationCore.Authorization;
+
 namespace MemberSystem.Web
 {
     public class Program
@@ -26,18 +28,10 @@ namespace MemberSystem.Web
             // 註冊自訂授權處理器
             builder.Services.AddAuthorization(options =>
             {
-                options.AddPolicy("ApprovedUserPolicy", policy =>
-                    policy.RequireAssertion(context =>
-                    {
-                        var isApprovedClaim = context.User.FindFirst("IsApproved");
-                        return isApprovedClaim != null && bool.TryParse(isApprovedClaim.Value, out var isApproved) && isApproved;
-                    }));
-                // 針對Role身分組設置
-                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-                options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+                AuthorizationPolicies.RegisterPolicies(options);
             });
 
-            builder.Services.AddSingleton<IAuthorizationHandler, ApprovedAndRoleHandler>();
+            builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
 
             // 1.取得組態中資料庫連線設定
@@ -74,6 +68,10 @@ namespace MemberSystem.Web
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Permission}/{action=CheckPermission}/{id?}");
 
             app.Run();
         }

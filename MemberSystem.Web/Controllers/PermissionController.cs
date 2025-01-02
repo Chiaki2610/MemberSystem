@@ -7,16 +7,42 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MemberSystem.ApplicationCore.Entities;
 using MemberSystem.Infrastructure.Data;
+using MemberSystem.ApplicationCore.Interfaces.Services;
 
 namespace MemberSystem.Web.Controllers
 {
-    public class PermissionsController : Controller
+    public class PermissionController : Controller
     {
         private readonly MemberSystemContext _context;
+        private readonly IPermissionServiceFactory _serviceFactory;
 
-        public PermissionsController(MemberSystemContext context)
+        public PermissionController(MemberSystemContext context,
+                                    IPermissionServiceFactory serviceFactory)
         {
             _context = context;
+            _serviceFactory = serviceFactory;
+        }
+        public async Task<IActionResult> CheckPermission(string type, int id, string permissionName)
+        {
+            try
+            {
+                var service = _serviceFactory.GetService(type);
+                var hasPermission = await service.HasPermissionAsync(id, permissionName);
+                if (!hasPermission)
+                {
+                    return Forbid();
+                }
+
+                return Ok("Access granted");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred");
+            }
         }
 
         // GET: Permissions
