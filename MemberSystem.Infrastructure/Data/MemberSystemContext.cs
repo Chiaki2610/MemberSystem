@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using MemberSystem.ApplicationCore.Entities;
-using MemberSystem.ApplicationCore.EntityRelationships;
 using Microsoft.EntityFrameworkCore;
 
 namespace MemberSystem.Infrastructure.Data;
@@ -165,7 +164,9 @@ public partial class MemberSystemContext : DbContext
         {
             entity.HasKey(e => e.LeaveRequestId).HasName("PK__LeaveReq__6094218E468DB59C");
 
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.LeaveType).HasMaxLength(50);
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .HasDefaultValue("Pending");
@@ -252,7 +253,6 @@ public partial class MemberSystemContext : DbContext
 
             entity.Property(e => e.MemberDepartmentId).HasColumnName("MemberDepartmentID");
             entity.Property(e => e.DepartmentId).HasColumnName("DepartmentID");
-            entity.Property(e => e.JobGradeId).HasColumnName("JobGradeID");
             entity.Property(e => e.MemberId).HasColumnName("MemberID");
             entity.Property(e => e.PositionId).HasColumnName("PositionID");
 
@@ -260,11 +260,6 @@ public partial class MemberSystemContext : DbContext
                 .HasForeignKey(d => d.DepartmentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__MemberDep__Depar__02C769E9");
-
-            entity.HasOne(d => d.JobGrade).WithMany(p => p.MemberDepartments)
-                .HasForeignKey(d => d.JobGradeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__MemberDep__JobGr__04AFB25B");
 
             entity.HasOne(d => d.Member).WithMany(p => p.MemberDepartments)
                 .HasForeignKey(d => d.MemberId)

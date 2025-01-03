@@ -16,6 +16,4 @@ public partial class JobGrade
     public decimal? MaxSalary { get; set; }
 
     public string? Description { get; set; }
-
-    public virtual ICollection<MemberDepartment> MemberDepartments { get; set; } = new List<MemberDepartment>();
 }

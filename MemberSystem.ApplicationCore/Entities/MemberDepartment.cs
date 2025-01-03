@@ -13,11 +13,7 @@ public partial class MemberDepartment
 
     public int PositionId { get; set; }
 
-    public int JobGradeId { get; set; }
-
     public virtual Department Department { get; set; } = null!;
-
-    public virtual JobGrade JobGrade { get; set; } = null!;
 
     public virtual Member Member { get; set; } = null!;
 
