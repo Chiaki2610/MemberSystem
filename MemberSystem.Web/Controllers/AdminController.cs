@@ -39,13 +39,13 @@ namespace MemberSystem.Web.Controllers
             // 資料分頁處理
             var pageSize = 10;
             var pageNumber = page ?? 1;
-            var totalRecords = model.CheckList.Count;
-            var pagedData = model.CheckList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            var totalRecords = model.CheckMemberDataList.Count;
+            var pagedData = model.CheckMemberDataList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
             ViewData["CurrentPage"] = pageNumber;
             ViewData["TotalPages"] = (int)Math.Ceiling((double)totalRecords / pageSize);
 
-            model.CheckList = pagedData;
+            model.CheckMemberDataList = pagedData;
         }
 
         [HttpPost]

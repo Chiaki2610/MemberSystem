@@ -4,15 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MemberSystem.Web.Controllers
 {
-    public class MemberController : Controller
+    public class UserController : Controller
     {
-        private readonly IUserService _userService;
+        private readonly IAccountService _userService;
         private readonly ProfileViewModelService _profileViewModelService;
-        private readonly ILogger<MemberController> _logger;
+        private readonly ILogger<UserController> _logger;
 
-        public MemberController(IUserService userService,
+        public UserController(IAccountService userService,
                                 ProfileViewModelService profileViewModelService,
-                                ILogger<MemberController> logger)
+                                ILogger<UserController> logger)
         {
             _userService = userService;
             _profileViewModelService = profileViewModelService;
@@ -22,17 +22,8 @@ namespace MemberSystem.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
-            var memberIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (memberIdClaim == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
-            if (!int.TryParse(memberIdClaim.Value, out int memberId))
-            {
-                TempData["ToastType"] = "error";
-                TempData["ToastMessage"] = "無效的會員";
-                return RedirectToAction("Login", "Account");
-            }
+            var memberId = GetMemberClaim();
+            if (memberId < 0) return RedirectToAction("Login", "Account");
             var memberData = await _profileViewModelService.GetMemberData(memberId);
 
             if (memberData == null)
@@ -86,6 +77,23 @@ namespace MemberSystem.Web.Controllers
                 TempData["ToastMessage"] = "更新會員資料失敗，請稍後再試！";
                 return RedirectToAction("Profile");
             }
+        }
+
+        private int GetMemberClaim()
+        {
+            var memberIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (memberIdClaim == null)
+            {
+                return -1;
+            }
+            if (!int.TryParse(memberIdClaim.Value, out int memberId))
+            {
+                TempData["ToastType"] = "error";
+                TempData["ToastMessage"] = "無效的會員";
+                return -1;
+            }
+
+            return memberId;
         }
     }
 }
