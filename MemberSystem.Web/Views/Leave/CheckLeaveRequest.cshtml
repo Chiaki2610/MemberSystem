@@ -1,0 +1,104 @@
+﻿@model CheckLeaveRequestViewModel
+
+<table class="table mb-5">
+    <thead>
+        <tr>
+            <th scope="col">會員ID</th>
+            <th scope="col">帳號</th>
+            <th scope="col">姓名</th>
+            <th scope="col">部門</th>
+            <th scope="col">職階</th>
+            <th scope="col">假別</th>
+            <th scope="col">起日</th>
+            <th scope="col">迄日</th>
+            <th scope="col">原因</th>
+            <th scope="col">狀態</th>
+            <th scope="col">簽核</th>
+            <th scope="col">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.CheckLeaveRequestList != null && Model.CheckLeaveRequestList.Any())
+        {
+            @for (var i = 0; i < Model.CheckLeaveRequestList.Count; i++)
+            {
+                <tr>
+                    <th scope="row">@Model.CheckLeaveRequestList[i].MemberId</th>
+                    <td>@Model.CheckLeaveRequestList[i].UserName</td>
+                    <td>@Model.CheckLeaveRequestList[i].FullName</td>
+                    <td>@Model.CheckLeaveRequestList[i].Department</td>
+                    <td>@Model.CheckLeaveRequestList[i].Position</td>
+                    <td>@Model.CheckLeaveRequestList[i].LeaveType</td>
+                    <td>@Model.CheckLeaveRequestList[i].StartDate</td>
+                    <td>@Model.CheckLeaveRequestList[i].EndDate</td>
+                    <td>@Model.CheckLeaveRequestList[i].Reason</td>
+                    <td>@Model.CheckLeaveRequestList[i].Status</td>
+                    <td>@Model.CheckLeaveRequestList[i].ApproverId</td>
+                    <td>
+                        <form asp-controller="Leave" asp-action="EditLeaveRequestStatus" method="post" style="display:inline;">
+                            <input type="hidden" name="ApprovalId" value="@Model.CheckLeaveRequestList[i].ApprovalId" />
+                            <input type="hidden" name="LeaveRequestId" value="@Model.CheckLeaveRequestList[i].LeaveRequestId" />
+                            <input type="hidden" name="MemberId" value="@Model.CheckLeaveRequestList[i].MemberId" />
+                            <input type="hidden" name="Status" value="Approved" />
+                            <button type="submit" class="btn btn-success">通過</button>
+                        </form>
+                        <form asp-controller="Leave" asp-action="EditLeaveRequestStatus" method="post" style="display:inline;">
+                            <input type="hidden" name="ApprovalId" value="@Model.CheckLeaveRequestList[i].ApprovalId" />
+                            <input type="hidden" name="LeaveRequestId" value="@Model.CheckLeaveRequestList[i].LeaveRequestId" />
+                            <input type="hidden" name="MemberId" value="@Model.CheckLeaveRequestList[i].MemberId" />
+                            <input type="hidden" name="Status" value="Rejected" />
+                            <button type="submit" class="btn btn-danger">駁回</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<nav class="mb-5">
+    <ul class="pagination">
+        @if (ViewData["CurrentPage"] != null && ViewData["TotalPages"] != null)
+        {
+            var currentPage = (int)ViewData["CurrentPage"];
+            var totalPages = (int)ViewData["TotalPages"];
+
+            if (currentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("ApproveMember", new { page = currentPage - 1 })">上一頁</a>
+                </li>
+            }
+
+            for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("ApproveMember", new { page = i })">@i</a>
+                </li>
+            }
+
+            if (currentPage < totalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("ApproveMember", new { page = currentPage + 1 })">下一頁</a>
+                </li>
+            }
+        }
+    </ul>
+</nav>
+
+@section endJS
+{
+    <script>
+        const toastType = '@TempData["ToastType"]';
+        const toastMessage = '@Html.Raw(TempData["ToastMessage"])';
+
+        if (toastMessage) {
+            Swal.fire({
+                icon: toastType,
+                title: toastType === 'success' ? '完成審核' : '審核失敗',
+                text: toastMessage
+            });
+        }
+    </script>
+}

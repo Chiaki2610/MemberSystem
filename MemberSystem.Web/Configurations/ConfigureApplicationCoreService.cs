@@ -8,8 +8,9 @@ namespace MemberSystem.Web.Configurations
     {
         public static IServiceCollection AddApplicationCoreService(this IServiceCollection services)
         {
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAdminService, AdminService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<ILeaveService, LeaveService>();
             //services.AddScoped<IPermissionServiceFactory, PermissionServiceFactory>();
             //services.AddScoped<IPermissionService, RolePermissionService>();

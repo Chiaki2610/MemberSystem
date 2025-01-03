@@ -1,0 +1,27 @@
+﻿@model List<ApprovalFlowDto>
+
+<h2>簽核流程</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>簽核順序</th>
+            <th>簽核描述</th>
+            <th>簽核狀態</th>
+            <th>簽核時間</th>
+            <th>審核人</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ApprovalOrder</td>
+                <td>@item.FlowDescription</td>
+                <td>@item.ApprovalStatus</td>
+                <td>@item.ApprovalTime?.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@item.ApproverName</td>
+            </tr>
+        }
+    </tbody>
+</table>

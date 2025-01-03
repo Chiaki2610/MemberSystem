@@ -15,27 +15,27 @@
         </tr>
     </thead>
     <tbody>
-        @if (Model.CheckList != null && Model.CheckList.Any())
+        @if (Model.CheckMemberDataList != null && Model.CheckMemberDataList.Any())
         {
-            @for (var i = 0; i < Model.CheckList.Count; i++)
+            @for (var i = 0; i < Model.CheckMemberDataList.Count; i++)
             {
                 <tr>
-                    <th scope="row">@Model.CheckList[i].MemberId</th>
-                    <td>@Model.CheckList[i].UserName</td>
-                    <td>@Model.CheckList[i].FullName</td>
-                    <td>@Model.CheckList[i].Email</td>
-                    <td>@Model.CheckList[i].DateOfBirth</td>
-                    <td>@Model.CheckList[i].PhoneNumber</td>
-                    <td>@Model.CheckList[i].BloodType</td>
-                    <td>@(Model.CheckList[i].RoleId == 1 ? "管理者" : "一般會員")</td>
+                    <th scope="row">@Model.CheckMemberDataList[i].MemberId</th>
+                    <td>@Model.CheckMemberDataList[i].UserName</td>
+                    <td>@Model.CheckMemberDataList[i].FullName</td>
+                    <td>@Model.CheckMemberDataList[i].Email</td>
+                    <td>@Model.CheckMemberDataList[i].DateOfBirth</td>
+                    <td>@Model.CheckMemberDataList[i].PhoneNumber</td>
+                    <td>@Model.CheckMemberDataList[i].BloodType</td>
+                    <td>@(Model.CheckMemberDataList[i].RoleId == 1 ? "管理者" : "一般會員")</td>
                     <td>
                         <form asp-controller="Admin" asp-action="UpdateApproved" method="post" style="display:inline;">
-                            <input type="hidden" name="MemberId" value="@Model.CheckList[i].MemberId" />
+                            <input type="hidden" name="MemberId" value="@Model.CheckMemberDataList[i].MemberId" />
                             <input type="hidden" name="IsApproved" value="true" />
                             <button type="submit" class="btn btn-success">通過</button>
                         </form>
                         <form asp-controller="Admin" asp-action="UpdateApproved" method="post" style="display:inline;">
-                            <input type="hidden" name="MemberId" value="@Model.CheckList[i].MemberId" />
+                            <input type="hidden" name="MemberId" value="@Model.CheckMemberDataList[i].MemberId" />
                             <input type="hidden" name="IsApproved" value="false" />
                             <button type="submit" class="btn btn-danger">駁回</button>
                         </form>

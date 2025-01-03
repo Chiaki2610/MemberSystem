@@ -1,4 +1,5 @@
 ﻿using MemberSystem.ApplicationCore.Dtos;
+using MemberSystem.ApplicationCore.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,9 @@ namespace MemberSystem.ApplicationCore.Interfaces.Services
         Task<LeaveBalanceDto> ViewLeaveBalanceAsync(int memberId, int leaveTypeId);
 
         Task<bool> SubmitLeaveRequestAsync(LeaveRequestDto request);
+
+        Task<bool> SubmitLeaveApprovalAsync(EditLeaveRequestStatusDto request);
+
+        Task<List<ApprovalFlowDto>> GetApprovalFlowAsync(int leaveRequestId);
     }
 }

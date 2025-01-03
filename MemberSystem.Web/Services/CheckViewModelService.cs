@@ -24,7 +24,7 @@ namespace MemberSystem.Web.Services
 
             return new CheckMemberDataViewModel
             {
-                CheckList = checkList,
+                CheckMemberDataList = checkList,
             };
         }
 
@@ -35,7 +35,7 @@ namespace MemberSystem.Web.Services
 
             return new CheckMemberDataViewModel
             {
-                CheckList = checkList,
+                CheckMemberDataList = checkList,
             };
         }
 

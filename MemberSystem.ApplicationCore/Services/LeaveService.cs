@@ -3,6 +3,7 @@ using MemberSystem.ApplicationCore.Entities;
 using MemberSystem.ApplicationCore.Interfaces;
 using MemberSystem.ApplicationCore.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,22 +14,33 @@ namespace MemberSystem.ApplicationCore.Services
 {
     public class LeaveService : ILeaveService
     {
+        private readonly IRepository<Member> _memberRepository;
         private readonly IRepository<ApprovalFlow> _approvalFlowRepository;
         private readonly IRepository<LeaveBalance> _leaveBalanceRepository;
         private readonly IRepository<LeaveRequest> _leaveRequestRepository;
-        //private readonly INotificationService _notificationService;
+        private readonly IRepository<LeaveApproval> _leaveApprovalRepository;
+        private readonly IRepository<MemberDepartment> _memberDepartmentRepository;
+        private readonly IUserService _userService;
         private readonly ITransaction _transaction;
         private readonly ILogger<LeaveService> _logger;
 
-        public LeaveService(IRepository<ApprovalFlow> approvalFlowRepository,
+        public LeaveService(IRepository<Member> memberRepository,
+                            IRepository<ApprovalFlow> approvalFlowRepository,
                             IRepository<LeaveBalance> leaveBalanceRepository,
                             IRepository<LeaveRequest> leaveRequestRepository,
+                            IRepository<LeaveApproval> leaveApprovalRepository,
+                            IRepository<MemberDepartment> memberDepartmentRepository,
+                            IUserService userService,
                             ITransaction transaction,
                             ILogger<LeaveService> logger)
         {
+            _memberRepository = memberRepository;
             _approvalFlowRepository = approvalFlowRepository;
             _leaveBalanceRepository = leaveBalanceRepository;
             _leaveRequestRepository = leaveRequestRepository;
+            _leaveApprovalRepository = leaveApprovalRepository;
+            _memberDepartmentRepository = memberDepartmentRepository;
+            _userService = userService;
             _transaction = transaction;
             _logger = logger;
         }
@@ -72,12 +84,73 @@ namespace MemberSystem.ApplicationCore.Services
                     StartDate = model.StartDate,
                     EndDate = model.EndDate,
                     Reason = model.Reason,
-                    ApproverId  = model.ApproverId,
+                    ApproverId = model.ApproverId,
                 };
 
-                await _leaveRequestRepository.AddAsync(leaveRequestEntity);
+                var entity = await _leaveRequestRepository.AddAsync(leaveRequestEntity);
+
+                var memberDepartment = await _userService.GetMemberDepartmentAsync(model.MemberId);
+                var approvalFlows = await _approvalFlowRepository
+                                    .ListAsync(d => d.DepartmentId == memberDepartment.DepartmentId);
+                var approvalFlowsOrderBy = approvalFlows.OrderBy(d => d.ApprovalOrder);
+
+                foreach (var flow in approvalFlowsOrderBy)
+                {
+                    var approval = new LeaveApproval
+                    {
+                        LeaveRequestId = entity.LeaveRequestId,
+                        FlowId = flow.FlowId,
+                        ApproverId = null,
+                        ApprovalStatus = "Pending",
+                        ApprovalTime = DateTime.Now,
+                    };
+                    var approvalAdd = await _leaveApprovalRepository.AddAsync(approval);
+                }
+
                 await _transaction.CommitAsync();
                 _logger.LogInformation("使用者申請成功：{Username}", model.MemberId);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> SubmitLeaveApprovalAsync(EditLeaveRequestStatusDto request)
+        {
+            try
+            {
+                _logger.LogInformation("開始進行申請者(非審核者)審核狀態更新：{memberId}", request.MemberId);
+                await _transaction.BeginTransactionAsync();
+
+                // 只會有一筆所以使用FirstOrDefaultAsync
+                var leaveRequest = await _leaveRequestRepository.FirstOrDefaultAsync
+                                  (lr => lr.LeaveRequestId == request.LeaveRequestId);
+                if (leaveRequest == null)
+                {
+                    _logger.LogWarning("找不到指定的LeaveRequest，ID：{request.LeaveRequestId}", request.LeaveRequestId);
+                    return false;
+                }
+
+                leaveRequest.Status = request.Status;
+                leaveRequest.ApproverId = request.ApproverId;
+                await _leaveRequestRepository.UpdateAsync(leaveRequest);
+
+                // 會有多筆所以需判斷ApprovalId的FlowID
+                var ad = await _memberDepartmentRepository.FirstOrDefaultAsync(m => m.MemberId == request.ApproverId);
+                var flowId = await _approvalFlowRepository.FirstOrDefaultAsync
+                                                          (f => f.DepartmentId == ad.DepartmentId && f.PositionId == ad.PositionId);
+                var leaveApproval = await _leaveApprovalRepository.FirstOrDefaultAsync(lr => lr.FlowId == flowId.FlowId);
+
+                leaveApproval.ApproverId = request.ApproverId;
+                leaveApproval.ApprovalStatus = request.Status;
+                leaveApproval.ApprovalTime = DateTime.Now;
+                await _leaveApprovalRepository.UpdateAsync(leaveApproval);
+
+                await _transaction.CommitAsync();
+                _logger.LogInformation("申請狀態更新成功：LeaveRequest {request.LeaveRequestId}，狀態：{request.Status}", request.LeaveRequestId, request.Status);
 
                 return true;
 
@@ -88,6 +161,39 @@ namespace MemberSystem.ApplicationCore.Services
             }
         }
 
+        public async Task<List<ApprovalFlowDto>> GetApprovalFlowAsync(int leaveRequestId)
+        {
+            // 確認請假申請是否存在
+            var leaveRequest = await _leaveRequestRepository.FirstOrDefaultAsync(lr => lr.LeaveRequestId == leaveRequestId);
+            if (leaveRequest == null)
+            {
+                _logger.LogWarning($"找不到指定的請假申請，ID：{leaveRequestId}");
+            }
 
+            // 查詢與該筆申請相關的所有簽核記錄
+            var leaveApprovals = await _leaveApprovalRepository.ListAsync(la => la.LeaveRequestId == leaveRequestId);
+
+            // 將與簽核紀錄相關的人員資訊找齊
+            var approverIds = leaveApprovals.Where(la => la.ApproverId.HasValue).Select(la => la.ApproverId.Value).Distinct();
+            var approvers = await _memberRepository.ListAsync(m => approverIds.Contains(m.MemberId));
+
+            var result = leaveApprovals
+                .OrderBy(la => la.FlowId)
+                .Select(la =>
+                {
+                    var approver = approvers.FirstOrDefault(m => m.MemberId == la.ApproverId);
+                    return new ApprovalFlowDto
+                    {
+                        ApprovalOrder = la.FlowId, // 設計資料表時FlowId是小→大表示簽核順序
+                        FlowDescription = $"簽核順位： {la.FlowId}",
+                        ApprovalStatus = la.ApprovalStatus,
+                        ApprovalTime = la.ApprovalTime,
+                        ApproverName = approver?.FullName
+                    };
+                })
+                .ToList();
+
+            return result;
+        }
     }
 }

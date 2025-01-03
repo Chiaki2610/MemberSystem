@@ -2,6 +2,6 @@
 {
     public class CheckMemberDataViewModel
     {
-        public List<RegisterDto> CheckList { get; set; }
+        public List<RegisterDto> CheckMemberDataList { get; set; }
     }
 }
