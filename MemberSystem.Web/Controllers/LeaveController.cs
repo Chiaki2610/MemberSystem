@@ -1,6 +1,4 @@
 ﻿using MemberSystem.ApplicationCore.Interfaces.Services;
-using MemberSystem.Web.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace MemberSystem.Web.Controllers
 {
@@ -19,6 +17,7 @@ namespace MemberSystem.Web.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var memberIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -45,12 +44,62 @@ namespace MemberSystem.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitLeaveRequest()
+        public async Task<IActionResult> SubmitLeaveRequest(LeaveRequesViewModel model)
         {
-            
+            if (!ModelState.IsValid)
+            {
+                TempData["ToastType"] = "error";
+                TempData["ToastMessage"] = "申請資料有誤，請檢查後重新再試一次。";
+                return View(model);
+            }
+
+            try
+            {
+                var dto = new LeaveRequestDto
+                {
+                    MemberId = model.MemberId,
+                    LeaveType = model.LeaveType,
+                    StartDate = model.StartDate,
+                    EndDate = model.EndDate,
+                    Reason = model.Reason
+                };
+
+                await _leaveService.SubmitLeaveRequestAsync(dto);
+
+                TempData["ToastType"] = "success";
+                TempData["ToastMessage"] = "申請成功，請等候審核結果；如欲查詢進度請利用「請假查詢」頁面，謝謝。";
+                return RedirectToAction("Index", "Home");
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ToastType"] = "error";
+                TempData["ToastMessage"] = ex.Message;
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "申請失敗");
+                TempData["ToastType"] = "error";
+                TempData["ToastMessage"] = "發生未預期的錯誤，請稍後重試；如有不便，還請見諒。";
+                return RedirectToAction("Error", "Home");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CheckLeaveRequest()
+        { 
+        
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditLeaveRequestStatus()
+        {
 
 
-            return Ok();
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

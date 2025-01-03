@@ -2,6 +2,7 @@
 using MemberSystem.ApplicationCore.Entities;
 using MemberSystem.ApplicationCore.Interfaces;
 using MemberSystem.ApplicationCore.Interfaces.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,18 @@ namespace MemberSystem.ApplicationCore.Services
         private readonly ITransaction _transaction;
         private readonly ILogger<LeaveService> _logger;
 
-
+        public LeaveService(IRepository<ApprovalFlow> approvalFlowRepository,
+                            IRepository<LeaveBalance> leaveBalanceRepository,
+                            IRepository<LeaveRequest> leaveRequestRepository,
+                            ITransaction transaction,
+                            ILogger<LeaveService> logger)
+        {
+            _approvalFlowRepository = approvalFlowRepository;
+            _leaveBalanceRepository = leaveBalanceRepository;
+            _leaveRequestRepository = leaveRequestRepository;
+            _transaction = transaction;
+            _logger = logger;
+        }
 
         public async Task<LeaveBalanceDto> ViewLeaveBalanceAsync(int memberId, int leaveTypeId)
         {
@@ -38,22 +50,34 @@ namespace MemberSystem.ApplicationCore.Services
             return result;
         }
 
-        public async Task<bool> SubmitLeaveRequestAsync(LeaveRequestDto request)
+        public async Task<bool> SubmitLeaveRequestAsync(LeaveRequestDto model)
         {
             try
             {
-                _logger.LogInformation("開始進行申請狀態更新：{memberId}", request.MemberId);
+                _logger.LogInformation("開始進行申請狀態更新：{memberId}", model.MemberId);
                 await _transaction.BeginTransactionAsync();
 
-                var leaveBalance = await ViewLeaveBalanceAsync(request.MemberId, request.LeaveTypeId);
+                // 驗證剩餘天數是否足夠的方法及判斷
+                //var leaveBalance = await ViewLeaveBalanceAsync(request.MemberId, request.LeaveTypeId);
+                //if (leaveBalance == null ||
+                //    leaveBalance.RemainingDays < Math.Round((decimal)(request.EndDate - request.StartDate).TotalDays, 2))
+                //{
+                //    _logger.LogWarning("假期餘額不足");
+                //}
 
-                if (leaveBalance == null ||
-                    leaveBalance.RemainingDays < Math.Round((decimal)(request.EndDate - request.StartDate).TotalDays, 2))
+                var leaveRequestEntity = new LeaveRequest
                 {
-                    _logger.LogWarning("假期餘額不足");
-                }
+                    MemberId = model.MemberId,
+                    LeaveType = model.LeaveType,
+                    StartDate = model.StartDate,
+                    EndDate = model.EndDate,
+                    Reason = model.Reason,
+                    ApproverId  = model.ApproverId,
+                };
 
-                
+                await _leaveRequestRepository.AddAsync(leaveRequestEntity);
+                await _transaction.CommitAsync();
+                _logger.LogInformation("使用者申請成功：{Username}", model.MemberId);
 
                 return true;
 

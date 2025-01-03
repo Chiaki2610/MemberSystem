@@ -11,6 +11,9 @@
         <div class="register-container">
             <h2 class="text-center mb-4">請假申請</h2>
             <form asp-controller="Leave" asp-action="SubmitLeaveRequest" method="post">
+                <input asp-for="MemberId" type="hidden" />
+                <input asp-for="UserName" type="hidden" />
+                <input asp-for="FullName" type="hidden" />
                 <div class="mb-3">
                     <label asp-for="UserName">帳號：@Model.UserName</label>
                     <span asp-validation-for="UserName" class="text-danger"></span>
@@ -20,7 +23,7 @@
                     <span asp-validation-for="FullName" class="text-danger"></span>
                 </div>
                 <div class="mb-3 d-flex">
-                    <select id="filterStatus" class="form-select mx-1">
+                    <select asp-for="LeaveType" id="filterStatus" class="form-select mx-1">
                         <option value="all">假別</option>
                         <option value="PaidVacation">年假</option>
                         <option value="PersonalLeave">事假</option>
@@ -39,6 +42,11 @@
                         <input type="date" asp-for="EndDate" class="form-control" placeholder="結束日期" />
                         <span asp-validation-for="EndDate" class="text-danger"></span>
                     </div>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Reason">申請原因</label>
+                    <textarea asp-for="Reason" name="reason" class="form-control" rows="5" placeholder="請在此輸入您的原因"></textarea>
+                    <span asp-validation-for="Reason" class="text-danger"></span>
                 </div>
                 <button type="submit" class="btn btn-custom w-100">送出申請</button>
             </form>
