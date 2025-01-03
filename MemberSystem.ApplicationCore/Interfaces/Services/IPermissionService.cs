@@ -8,9 +8,9 @@ namespace MemberSystem.ApplicationCore.Interfaces.Services
 {
     public interface IPermissionService
     {
-        Task<bool> HasPermissionAsync(int id, string permissionName);
+        //Task<bool> HasPermissionAsync(int id, string permissionName);
 
-        Task<IEnumerable<string>> GetPermissionsAsync(int id);
+        //Task<IEnumerable<string>> GetPermissionsAsync(int id);
 
     }
 }

@@ -8,6 +8,6 @@ namespace MemberSystem.ApplicationCore.Interfaces.Services
 {
     public interface IPermissionServiceFactory
     {
-        IPermissionService GetService(string type);
+        //IPermissionService GetService(string type);
     }
 }

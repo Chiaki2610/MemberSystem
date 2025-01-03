@@ -10,9 +10,9 @@ namespace MemberSystem.Web.Configurations
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAdminService, AdminService>();
-            services.AddScoped<IPermissionServiceFactory, PermissionServiceFactory>();
-            services.AddScoped<IPermissionService, RolePermissionService>();
-            services.AddScoped<IPermissionService, PositionPermissionService>();
+            //services.AddScoped<IPermissionServiceFactory, PermissionServiceFactory>();
+            //services.AddScoped<IPermissionService, RolePermissionService>();
+            //services.AddScoped<IPermissionService, PositionPermissionService>();
 
             return services;
         }

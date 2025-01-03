@@ -11,22 +11,22 @@ namespace MemberSystem.ApplicationCore.Factories
 {
     public class PermissionServiceFactory : IPermissionServiceFactory
     {
-        private readonly IServiceProvider _serviceProvider;
+        //private readonly IServiceProvider _serviceProvider;
 
-        public PermissionServiceFactory(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
+        //public PermissionServiceFactory(IServiceProvider serviceProvider)
+        //{
+        //    _serviceProvider = serviceProvider;
+        //}
 
-        public IPermissionService GetService(string type)
-        {
-            return type switch
-            {
-                "Role" => _serviceProvider.GetService<RolePermissionService>(),
-                "Position" => _serviceProvider.GetService<PositionPermissionService>(),
-                _ => throw new ArgumentException("Invalid service type")
-            };
-        }
+        //public IPermissionService GetService(string type)
+        //{
+        //    return type switch
+        //    {
+        //        "Role" => _serviceProvider.GetService<RolePermissionService>(),
+        //        "Position" => _serviceProvider.GetService<PositionPermissionService>(),
+        //        _ => throw new ArgumentException("Invalid service type")
+        //    };
+        //}
     }
 
 }

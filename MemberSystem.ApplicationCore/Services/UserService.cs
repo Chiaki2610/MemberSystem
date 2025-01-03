@@ -23,19 +23,20 @@ namespace MemberSystem.ApplicationCore.Services
         private readonly ITransaction _transaction;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UserService> _logger;
-        private readonly IPermissionService _permissionService;
+        //private readonly IPermissionService _permissionService;
 
         public UserService(IRepository<Member> memberRepository,
                            ITransaction transaction,
                            IHttpContextAccessor httpContextAccessor,
-                           ILogger<UserService> logger,
-                           IPermissionService permissionService)
+                           ILogger<UserService> logger
+            //,IPermissionService permissionService
+            )
         {
             _memberRepository = memberRepository;
             _transaction = transaction;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
-            _permissionService = permissionService;
+            //_permissionService = permissionService;
         }
 
         /// <summary>
@@ -142,7 +143,7 @@ namespace MemberSystem.ApplicationCore.Services
         {
             var roleName = (model.RoleId == 1) ? "Admin" : "User";
 
-            var permissions = await _permissionService.GetPermissionsAsync(model.RoleId);
+            //var permissions = await _permissionService.GetPermissionsAsync(model.RoleId);
 
             var claims = new List<Claim>
             {
@@ -150,7 +151,7 @@ namespace MemberSystem.ApplicationCore.Services
                 new Claim(ClaimTypes.NameIdentifier, model.MemberId.ToString()),
                 new Claim("IsApproved", model.IsApproved.HasValue && model.IsApproved.Value ? "true" : "false"),
                 new Claim(ClaimTypes.Role, roleName),
-                new Claim("Permissions", string.Join(",", permissions))
+               // new Claim("Permissions", string.Join(",", permissions))
             };
 
             var authProperties = new AuthenticationProperties
