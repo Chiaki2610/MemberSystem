@@ -17,23 +17,23 @@ namespace MemberSystem.Web.Services
             _logger = logger;
         }
 
-        public async Task<CheckViewModel> GetUnapprovedMembersAsync()
+        public async Task<CheckMemberDataViewModel> GetUnapprovedMembersAsync()
         {
             var unapprovedMembers = await _memberRepository.ListAsync(m => m.IsApproved == null);
             List<RegisterDto> checkList = ConvertToViewModel(unapprovedMembers);
 
-            return new CheckViewModel
+            return new CheckMemberDataViewModel
             {
                 CheckList = checkList,
             };
         }
 
-        public async Task<CheckViewModel> GetMembersAsync()
+        public async Task<CheckMemberDataViewModel> GetMembersAsync()
         {
             var members = await _memberRepository.ListAsync(m => m.IsApproved != null);
             List<RegisterDto> checkList = ConvertToViewModel(members);
 
-            return new CheckViewModel
+            return new CheckMemberDataViewModel
             {
                 CheckList = checkList,
             };

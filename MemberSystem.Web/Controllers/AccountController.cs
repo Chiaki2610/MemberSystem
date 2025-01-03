@@ -114,7 +114,7 @@ namespace MemberSystem.Web.Controllers
                 await _userService.RegisterUserAsync(dto);
 
                 TempData["ToastType"] = "success";
-                TempData["ToastMessage"] = "註冊申請成功，請等候審核結果；如欲查詢進度請利用「Registration Status」頁面，謝謝。";
+                TempData["ToastMessage"] = "註冊申請成功，請等候審核結果；如欲查詢進度請利用「註冊查詢」頁面，謝謝。";
                 return RedirectToAction("Index", "Home");
             }
             catch (InvalidOperationException ex)

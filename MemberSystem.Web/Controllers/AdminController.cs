@@ -34,7 +34,7 @@ namespace MemberSystem.Web.Controllers
             return View(model);
         }
 
-        private void PagedList(int? page, CheckViewModel model)
+        private void PagedList(int? page, CheckMemberDataViewModel model)
         {
             // 資料分頁處理
             var pageSize = 10;
