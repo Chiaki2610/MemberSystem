@@ -19,23 +19,23 @@ namespace MemberSystem.ApplicationCore.Services
 {
     public class UserService : IUserService
     {
-        private readonly RolePermissionService _rolePermissionService;
         private readonly IRepository<Member> _memberRepository;
         private readonly ITransaction _transaction;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UserService> _logger;
+        private readonly IPermissionService _permissionService;
 
         public UserService(IRepository<Member> memberRepository,
                            ITransaction transaction,
                            IHttpContextAccessor httpContextAccessor,
                            ILogger<UserService> logger,
-                           RolePermissionService rolePermissionService)
+                           IPermissionService permissionService)
         {
             _memberRepository = memberRepository;
             _transaction = transaction;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
-            _rolePermissionService = rolePermissionService;
+            _permissionService = permissionService;
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace MemberSystem.ApplicationCore.Services
         {
             var roleName = (model.RoleId == 1) ? "Admin" : "User";
 
-            var permissions = await _rolePermissionService.GetPermissionsByRoleAsync(model.RoleId);
+            var permissions = await _permissionService.GetPermissionsAsync(model.RoleId);
 
             var claims = new List<Claim>
             {

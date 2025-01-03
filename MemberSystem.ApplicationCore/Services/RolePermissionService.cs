@@ -23,9 +23,9 @@ namespace MemberSystem.ApplicationCore.Services
                 rp.Permission.PermissionName == permissionName);
         }
 
-        public async Task<IEnumerable<string>> GetPermissionsByRoleAsync(int roleId)
+        public async Task<IEnumerable<string>> GetPermissionsAsync(int id)
         {
-            var rolePermissions = await _rolePermissionRepository.ListAsync(x => x.RoleId == roleId);
+            var rolePermissions = await _rolePermissionRepository.ListAsync(x => x.RoleId == id);
             return rolePermissions.Select(rp => rp.Permission.PermissionName);
         }
     }

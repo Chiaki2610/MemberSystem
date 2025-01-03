@@ -10,5 +10,7 @@ namespace MemberSystem.ApplicationCore.Interfaces.Services
     {
         Task<bool> HasPermissionAsync(int id, string permissionName);
 
+        Task<IEnumerable<string>> GetPermissionsAsync(int id);
+
     }
 }
