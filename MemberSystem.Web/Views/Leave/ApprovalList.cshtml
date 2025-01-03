@@ -1,0 +1,87 @@
+﻿@model ApprovalListViewModel
+
+<table class="table mb-5">
+    <thead>
+        <tr>
+            <th scope="col">請假ID</th>
+            <th scope="col">會員ID</th>
+            <th scope="col">申請假別</th>
+            <th scope="col">請假起日</th>
+            <th scope="col">請假迄日</th>
+            <th scope="col">請假原因</th>
+            <th scope="col">申請狀態</th>
+            <th scope="col">檢視流程</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.ApprovalViewModelList != null && Model.ApprovalViewModelList.Any())
+        {
+            @for (var i = 0; i < Model.ApprovalViewModelList.Count; i++)
+            {
+                <tr>
+                    <th scope="row">@Model.ApprovalViewModelList[i].LeaveRequestId</th>
+                    <td>@Model.ApprovalViewModelList[i].MemberId</td>
+                    <td>@Model.ApprovalViewModelList[i].LeaveType</td>
+                    <td>@Model.ApprovalViewModelList[i].StartDate.ToString("yyyy-MM-dd-hh-mm-ss")</td>
+                    <td>@Model.ApprovalViewModelList[i].EndDate.ToString("yyyy-MM-dd-hh-mm-ss")</td>
+                    <td>@Model.ApprovalViewModelList[i].Reason</td>
+                    <td>@Model.ApprovalViewModelList[i].Status</td>
+                    <td>
+                        <form asp-controller="leave" asp-action="GetApprovalFlow" method="post" style="display:inline;">
+                            <input type="hidden" name="LeaveRequestId" value="@Model.ApprovalViewModelList[i].LeaveRequestId" />
+                            <button type="submit" class="btn btn-success">檢視</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<nav class="mb-5">
+    <ul class="pagination">
+        @if (ViewData["CurrentPage"] != null && ViewData["TotalPages"] != null)
+        {
+            var currentPage = (int)ViewData["CurrentPage"];
+            var totalPages = (int)ViewData["TotalPages"];
+
+            if (currentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("ApproveMember", new { page = currentPage - 1 })">上一頁</a>
+                </li>
+            }
+
+            for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("ApproveMember", new { page = i })">@i</a>
+                </li>
+            }
+
+            if (currentPage < totalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("ApproveMember", new { page = currentPage + 1 })">下一頁</a>
+                </li>
+            }
+        }
+    </ul>
+</nav>
+
+@section endJS
+{
+    <script>
+        const toastType = '@TempData["ToastType"]';
+        const toastMessage = '@Html.Raw(TempData["ToastMessage"])';
+
+        if (toastMessage) {
+            Swal.fire({
+                icon: toastType,
+                title: toastType === 'success' ? '完成審核' : '審核失敗',
+                text: toastMessage
+            });
+        }
+    </script>
+}

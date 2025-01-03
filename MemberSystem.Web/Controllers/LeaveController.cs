@@ -5,14 +5,17 @@ namespace MemberSystem.Web.Controllers
     public class LeaveController : Controller
     {
         private readonly LeaveRequesViewModelService _leaveRequesViewModelService;
+        private readonly ApprovalListViewModelService _approvalListViewModelService;
         private readonly ILeaveService _leaveService;
         private readonly ILogger<LeaveController> _logger;
 
         public LeaveController(LeaveRequesViewModelService leaveRequesViewModelService,
+                               ApprovalListViewModelService approvalListViewModelService,
                                ILeaveService leaveService,
                                ILogger<LeaveController> logger)
         {
             _leaveRequesViewModelService = leaveRequesViewModelService;
+            _approvalListViewModelService = approvalListViewModelService;
             _leaveService = leaveService;
             _logger = logger;
         }
@@ -35,6 +38,11 @@ namespace MemberSystem.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 請假申請
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> SubmitLeaveRequest(LeaveRequesViewModel model)
         {
@@ -78,6 +86,11 @@ namespace MemberSystem.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// 查看申請中的案件
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> CheckLeaveRequest(int? page)
         {
@@ -90,6 +103,14 @@ namespace MemberSystem.Web.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// 審核申請
+        /// </summary>
+        /// <param name="approvalId"></param>
+        /// <param name="leaveRequestId"></param>
+        /// <param name="memberId"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> EditLeaveRequestStatus(int approvalId, int leaveRequestId, int memberId, string status)
         {
@@ -131,14 +152,59 @@ namespace MemberSystem.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// 個人查看所有請假申請的頁面
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> ApprovalList()
         {
             var memberId = GetMemberClaim();
             if (memberId < 0) return RedirectToAction("Login", "Account");
-            // 列出使用者所有請求的畫面
-            // View上要有foreach出的按鈕可以POST並轉向到GetApprovalFlow
-            return View();
+
+            var model = await _approvalListViewModelService.GetLeaveRequests(memberId);
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// 查看單一申請的簽核流程
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> ViewApprovalFlow(int id)
+        {
+            try
+            {
+                var approvalFlow = await _leaveService.GetApprovalFlowAsync(id);
+                return View(approvalFlow);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "檢視簽核流程失敗，LeaveRequestId：{LeaveRequestId}", id);
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetApprovalFlow(int leaveRequestId)
+        {
+            return RedirectToAction("ViewApprovalFlow", "Leave", new { id = leaveRequestId });
+        }
+
+        private void PagedList(int? page, CheckLeaveRequestViewModel model)
+        {
+            // 資料分頁處理
+            var pageSize = 10;
+            var pageNumber = page ?? 1;
+            var totalRecords = model.CheckLeaveRequestList.Count;
+            var pagedData = model.CheckLeaveRequestList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            ViewData["CurrentPage"] = pageNumber;
+            ViewData["TotalPages"] = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+            model.CheckLeaveRequestList = pagedData;
         }
 
         private int GetMemberClaim()
@@ -156,35 +222,6 @@ namespace MemberSystem.Web.Controllers
             }
 
             return memberId;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetApprovalFlow(int leaveRequestId)
-        {
-            try
-            {
-                var approvalFlow = await _leaveService.GetApprovalFlowAsync(leaveRequestId);
-                return View(approvalFlow);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "檢視簽核流程失敗，LeaveRequestId：{LeaveRequestId}", leaveRequestId);
-                return BadRequest(new { Message = ex.Message });
-            }
-        }
-
-        private void PagedList(int? page, CheckLeaveRequestViewModel model)
-        {
-            // 資料分頁處理
-            var pageSize = 10;
-            var pageNumber = page ?? 1;
-            var totalRecords = model.CheckLeaveRequestList.Count;
-            var pagedData = model.CheckLeaveRequestList.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-
-            ViewData["CurrentPage"] = pageNumber;
-            ViewData["TotalPages"] = (int)Math.Ceiling((double)totalRecords / pageSize);
-
-            model.CheckLeaveRequestList = pagedData;
         }
     }
 }

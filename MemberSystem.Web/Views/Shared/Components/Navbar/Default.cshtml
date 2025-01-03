@@ -18,6 +18,12 @@
         <li class="nav-item">
             <a class="nav-link" asp-area="" asp-controller="Account" asp-action="ProgressForAdmin">註冊查詢</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Leave" asp-action="Index">請假申請</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Leave" asp-action="ApprovalList">請假查詢</a>
+        </li>
     }
     else if (Model.IsAuthenticated)
     {
@@ -29,6 +35,12 @@
         </li>
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Leave" asp-action="Index">請假申請</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="" asp-controller="Leave" asp-action="ApprovalList">請假查詢</a>
         </li>
     }
     else
