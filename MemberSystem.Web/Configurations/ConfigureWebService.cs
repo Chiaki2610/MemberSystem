@@ -8,6 +8,7 @@ namespace MemberSystem.Web.Configurations
         {
             services.AddScoped<CheckViewModelService>();
             services.AddScoped<ProfileViewModelService>();
+            services.AddScoped<LeaveRequesViewModelService>();
             return services;
         }
     }
