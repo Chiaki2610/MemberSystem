@@ -170,7 +170,8 @@ namespace MemberSystem.ApplicationCore.Services
                 var ad = await _memberDepartmentRepository.FirstOrDefaultAsync(m => m.MemberId == request.ApproverId);
                 var flowId = await _approvalFlowRepository.FirstOrDefaultAsync
                                                           (f => f.DepartmentId == ad.DepartmentId && f.PositionId == ad.PositionId);
-                var leaveApproval = await _leaveApprovalRepository.FirstOrDefaultAsync(lr => lr.FlowId == flowId.FlowId);
+                var leaveApproval = await _leaveApprovalRepository.FirstOrDefaultAsync(lr => lr.FlowId == flowId.FlowId && lr.LeaveRequestId == request.LeaveRequestId);
+
 
                 leaveApproval.ApproverId = request.ApproverId;
                 leaveApproval.ApprovalStatus = request.Status;
