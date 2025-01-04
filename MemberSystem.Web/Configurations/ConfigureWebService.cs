@@ -11,6 +11,7 @@ namespace MemberSystem.Web.Configurations
             services.AddScoped<LeaveRequesViewModelService>();
             services.AddScoped<LeaveReportViewModelService>();
             services.AddScoped<ApprovalListViewModelService>();
+            services.AddScoped<LogReportViewModelService>();
             return services;
         }
     }

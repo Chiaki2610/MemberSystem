@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MemberSystem.ApplicationCore.Entities;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
@@ -8,11 +9,15 @@ namespace MemberSystem.Web.Controllers
     {
 
         private readonly LeaveReportViewModelService _leaveReportViewModelService;
+        private readonly LogReportViewModelService _logReportViewModelService;
         private readonly ILogger<ReportController> _logger;
 
-        public ReportController(LeaveReportViewModelService leaveReportViewModelService, ILogger<ReportController> logger)
+        public ReportController(LeaveReportViewModelService leaveReportViewModelService,
+                                LogReportViewModelService logReportViewModelService,
+                                ILogger<ReportController> logger)
         {
             _leaveReportViewModelService = leaveReportViewModelService;
+            _logReportViewModelService = logReportViewModelService;
             _logger = logger;
         }
 
@@ -49,6 +54,45 @@ namespace MemberSystem.Web.Controllers
             return View(model);
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> LogReport()
+        {
+            var model = new LogReportViewModel()
+            {
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now,
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetLogReport(LogReportViewModel model)
+        {
+            try
+            {
+                _logger.LogInformation($"開始查詢報表，條件：StartDate={model.StartDate}, EndDate={model.EndDate}, LogType={model.LogType}");
+
+                var reportData = await _logReportViewModelService.GetLogReportAsync(model);
+
+                // 將查到的資料以Json形式存儲在Session
+                HttpContext.Session.SetString("LogReportData", JsonConvert.SerializeObject(reportData));
+
+                return View("ViewLogReport", reportData);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "查詢請假報表時發生錯誤");
+                return RedirectToAction("LogReport", "Report");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewLogReport()
+        {
+            return View();
+        }
+
         // 將報表匯出Excel的方法
         [HttpPost]
         public async Task<IActionResult> ExportToExcel()
@@ -77,6 +121,5 @@ namespace MemberSystem.Web.Controllers
                 return RedirectToAction("Index", "Report");
             }
         }
-
     }
 }

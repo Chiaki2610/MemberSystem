@@ -17,11 +17,5 @@ namespace MemberSystem.Infrastructure.Data
             await _context.Logs.AddAsync(log);
             await _context.SaveChangesAsync();
         }
-
-        public async Task AddLogDetailAsync(LogDetail logDetail)
-        {
-            await _context.LogDetails.AddAsync(logDetail);
-            await _context.SaveChangesAsync();
-        }
     }
 }

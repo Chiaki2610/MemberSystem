@@ -34,8 +34,6 @@ public partial class MemberSystemContext : DbContext
 
     public virtual DbSet<Log> Logs { get; set; }
 
-    public virtual DbSet<LogDetail> LogDetails { get; set; }
-
     public virtual DbSet<Member> Members { get; set; }
 
     public virtual DbSet<MemberDepartment> MemberDepartments { get; set; }
@@ -205,16 +203,6 @@ public partial class MemberSystemContext : DbContext
             entity.HasOne(d => d.Member).WithMany(p => p.Logs)
                 .HasForeignKey(d => d.MemberId)
                 .HasConstraintName("FK__Logs__MemberID__6442E2C9");
-        });
-
-        modelBuilder.Entity<LogDetail>(entity =>
-        {
-            entity.HasKey(e => e.DetailId).HasName("PK__LogDetai__135C314D38C11D04");
-
-            entity.HasOne(d => d.Log).WithMany(p => p.LogDetails)
-                .HasForeignKey(d => d.LogId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__LogDetail__LogID__671F4F74");
         });
 
         modelBuilder.Entity<Member>(entity =>

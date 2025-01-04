@@ -1,0 +1,40 @@
+﻿@model LogReportViewModel
+
+
+@section topCSS
+{
+    <link href="~/css/register.css" rel="stylesheet" />
+}
+
+<div class="container px-5">
+    <div class="row">
+        <div class="register-container">
+            <h2 class="text-center mb-4">(Log日誌)報表查詢</h2>
+            <form asp-controller="Report" asp-action="GetLogReport" method="post">
+                <div class="mb-3">
+                    <div class="mb-3">
+                        <label asp-for="StartDate">起始日期</label>
+                        <input type="date" asp-for="StartDate" class="form-control" placeholder="起始日期" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="mb-3">
+                        <label asp-for="EndDate">結束日期</label>
+                        <input type="date" asp-for="EndDate" class="form-control" placeholder="結束日期" />
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <select asp-for="LogType" id="filterStatus" class="form-select mx-1">
+                        <option value="all">Log級別</option>
+                        <option value="Information">Information</option>
+                        <option value="Warning">Warning</option>
+                        <option value="Error">Error</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-custom w-100">查詢</button>
+            </form>
+        </div>
+    </div>
+</div>

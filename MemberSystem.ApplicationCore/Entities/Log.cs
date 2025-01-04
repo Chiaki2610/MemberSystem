@@ -19,7 +19,5 @@ public partial class Log
 
     public string Message { get; set; } = null!;
 
-    public virtual ICollection<LogDetail> LogDetails { get; set; } = new List<LogDetail>();
-
     public virtual Member? Member { get; set; }
 }

@@ -1,0 +1,42 @@
+﻿@model List<LogReportViewModel>
+
+<h2>Log報表</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>日誌編號</th>
+            <th>日誌類型</th>
+            <th>日誌時間</th>
+            <th>所屬系統</th>
+            <th>嚴重等級</th>
+            <th>自訂訊息</th>
+            <th>觸發人員</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model == null || !Model.Any())
+        {
+            <tr>
+                <td colspan="9" class="text-center">沒有找到符合條件的請假記錄</td>
+            </tr>
+        }
+        else
+        {
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.LogId</td>
+                    <td>@item.LogType</td>
+                    <td>@item.LogTime.ToString("yyyy-MM-dd")</td>
+                    <td>@item.RelatedSystem</td>
+                    <td>@item.Severity</td>
+                    <td>@item.Message</td>
+                    <td>@item.MemberId</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -6,6 +6,5 @@ namespace MemberSystem.ApplicationCore.Interfaces
     public interface ILogRepository
     {
         Task AddLogAsync(Log log);
-        Task AddLogDetailAsync(LogDetail logDetail);
     }
 }
