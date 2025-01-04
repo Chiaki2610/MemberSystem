@@ -1,9 +1,9 @@
 ﻿@model List<LeaveReportViewModel>
 
 <h2>請假報表</h2>
-
-
-
+<form asp-controller="Report" asp-action="ExportToExcel" method="post">
+    <button type="submit" class="btn btn-success">匯出Excel</button>
+</form>
 <table class="table table-bordered">
     <thead>
         <tr>

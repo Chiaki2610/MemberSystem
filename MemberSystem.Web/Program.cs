@@ -12,6 +12,18 @@ namespace MemberSystem.Web
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            // 為了處理報表匯成Excel時的資料量設置Session緩存機制
+            builder.Services.AddDistributedMemoryCache(); //需要內存支持功能
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // 設定過期時限
+                options.Cookie.HttpOnly = true; // 僅允許HTTP訪問
+                options.Cookie.IsEssential = true;
+            });
+
+            // 全域設定非商業授權許可
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
             // Cookie驗證+導轉設置
             builder.Services
                    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -59,11 +71,17 @@ namespace MemberSystem.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+
             app.UseRouting();
+            
+            // 先確定路由↑設置好才能解析路徑；在驗證與授權↓前要啟用緩存機制
+            app.UseSession();
 
             // 先驗證再授權
             app.UseAuthentication();
             app.UseAuthorization();
+
+
 
             app.MapControllerRoute(
                 name: "default",
@@ -72,6 +90,8 @@ namespace MemberSystem.Web
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Permission}/{action=CheckPermission}/{id?}");
+
+
 
             app.Run();
         }

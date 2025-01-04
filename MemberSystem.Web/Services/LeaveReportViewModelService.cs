@@ -1,8 +1,4 @@
-﻿using MemberSystem.ApplicationCore.Entities;
-using Microsoft.Extensions.Logging;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-
-namespace MemberSystem.Web.Services
+﻿namespace MemberSystem.Web.Services
 {
     public class LeaveReportViewModelService
     {
@@ -76,6 +72,55 @@ namespace MemberSystem.Web.Services
             _logger.LogInformation($"請假報表查詢完成，共查詢到 {result.Count} 條記錄");
 
             return result;
+        }
+        public async Task<byte[]> ExportLeaveReportToExcelAsync(List<LeaveReportViewModel> reportData)
+        {
+            using (var package = new ExcelPackage())
+            {
+                // 新增Excel
+                var worksheet = package.Workbook.Worksheets.Add("Leave Report");
+
+                // 設定標題(Excel的起始欄位A1座標是(1,1)!!!)
+                worksheet.Cells[1, 1].Value = "申請編號";
+                worksheet.Cells[1, 2].Value = "員工姓名";
+                worksheet.Cells[1, 3].Value = "部門";
+                worksheet.Cells[1, 4].Value = "職位";
+                worksheet.Cells[1, 5].Value = "假別";
+                worksheet.Cells[1, 6].Value = "請假起迄";
+                worksheet.Cells[1, 7].Value = "請假天數";
+                worksheet.Cells[1, 8].Value = "狀態";
+                worksheet.Cells[1, 9].Value = "原因";
+
+                // 設置標題樣式
+                using (var range = worksheet.Cells[1, 1, 1, 9])
+                {
+                    range.Style.Font.Bold = true;
+                    range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                }
+
+                // 將數據塞進欄位
+                for (int i = 0; i < reportData.Count; i++)
+                {
+                    var row = i + 2;
+                    var item = reportData[i];
+                    worksheet.Cells[row, 1].Value = item.LeaveRequestId;
+                    worksheet.Cells[row, 2].Value = item.FullName;
+                    worksheet.Cells[row, 3].Value = item.DepartmentName;
+                    worksheet.Cells[row, 4].Value = item.PositionName;
+                    worksheet.Cells[row, 5].Value = item.LeaveType;
+                    worksheet.Cells[row, 6].Value = $"{item.StartDate:yyyy-MM-dd} - {item.EndDate:yyyy-MM-dd}";
+                    worksheet.Cells[row, 7].Value = item.LeaveDays;
+                    worksheet.Cells[row, 7].Style.Numberformat.Format = "0.0\"天\"";
+                    worksheet.Cells[row, 8].Value = item.ApprovalStatus;
+                    worksheet.Cells[row, 9].Value = item.Reason;
+                }
+
+                // 自動調整欄寬
+                worksheet.Cells.AutoFitColumns();
+
+                // 返回Excel檔案內容
+                return package.GetAsByteArray();
+            }
         }
     }
 }
