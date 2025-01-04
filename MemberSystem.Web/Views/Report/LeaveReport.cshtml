@@ -1,0 +1,93 @@
+﻿@model List<LeaveReportViewModel>
+
+<h2>請假報表</h2>
+
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>申請編號</th>
+            <th>員工姓名</th>
+            <th>部門</th>
+            <th>職位</th>
+            <th>假別</th>
+            <th>請假起迄日期</th>
+            <th>請假天數</th>
+            <th>狀態</th>
+            <th>原因</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model == null || !Model.Any())
+        {
+            <tr>
+                <td colspan="9" class="text-center">沒有找到符合條件的請假記錄</td>
+            </tr>
+        }
+        else
+        {
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.LeaveRequestId</td>
+                    <td>@item.FullName</td>
+                    <td>
+                        @switch (item.DepartmentName)
+                        {
+                            case "ManagerOffice":
+                                <text>店長室</text>
+                                ; break;
+                            case "FinanceSection":
+                                <text>財務課</text>
+                                ; break;
+                            default:
+                                <text>未知狀態</text>
+                                ; break;
+                        }
+
+                    </td>
+                    <td>@item.PositionName</td>
+                    <td>
+
+                        @switch (item.LeaveType)
+                        {
+                            case "PaidVacation":
+                                <text>年假</text>
+                                ; break;
+                            case "PersonalLeave":
+                                <text>事假</text>
+                                ; break;
+                            default:
+                                <text>未知狀態</text>
+                                ; break;
+                        }
+
+
+                    </td>
+                    <td>@item.StartDate.ToString("yyyy-MM-dd") - @item.EndDate.ToString("yyyy-MM-dd")</td>
+                    <td>@item.LeaveDays</td>
+                    <td>
+                        @switch (item.ApprovalStatus)
+                        {
+                            case "Pending":
+                                <text>待審核</text>
+                                ; break;
+                            case "Approved":
+                                <text>已核准</text>
+                                ; break;
+                            case "Rejected":
+                                <text>已駁回</text>
+                                ; break;
+                            default:
+                                <text>未知狀態</text>
+                                ; break;
+                        }
+                    </td>
+                    <td>@item.Reason</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

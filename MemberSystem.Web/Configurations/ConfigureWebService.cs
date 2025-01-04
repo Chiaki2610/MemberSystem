@@ -9,6 +9,7 @@ namespace MemberSystem.Web.Configurations
             services.AddScoped<CheckViewModelService>();
             services.AddScoped<ProfileViewModelService>();
             services.AddScoped<LeaveRequesViewModelService>();
+            services.AddScoped<LeaveReportViewModelService>();
             services.AddScoped<ApprovalListViewModelService>();
             return services;
         }
