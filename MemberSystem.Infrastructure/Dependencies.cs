@@ -13,6 +13,7 @@ namespace MemberSystem.Infrastructure
             var connectionString = configuration.GetConnectionString("MemberSystemContext");
             services.AddDbContext<MemberSystemContext>(options => options.UseSqlServer(connectionString));
 
+            services.AddScoped(typeof(ILogRepository), typeof(LogRepository));
             services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped(typeof(ITransaction), typeof(EfTransaction));
         }

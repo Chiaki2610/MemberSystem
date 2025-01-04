@@ -1,5 +1,6 @@
 ﻿using MemberSystem.ApplicationCore.Factories;
 using MemberSystem.ApplicationCore.Interfaces.Services;
+using MemberSystem.Infrastructure.Logging;
 
 namespace MemberSystem.Web.Configurations
 {
@@ -12,6 +13,7 @@ namespace MemberSystem.Web.Configurations
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ILeaveService, LeaveService>();
+            services.AddScoped<ILoggerProvider, DatabaseLoggerProvider>();
             //services.AddScoped<IPermissionServiceFactory, PermissionServiceFactory>();
             //services.AddScoped<IPermissionService, RolePermissionService>();
             //services.AddScoped<IPermissionService, PositionPermissionService>();
