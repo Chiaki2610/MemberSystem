@@ -32,7 +32,23 @@
                     <td>@Model.CheckLeaveRequestList[i].StartDate</td>
                     <td>@Model.CheckLeaveRequestList[i].EndDate</td>
                     <td>@Model.CheckLeaveRequestList[i].Reason</td>
-                    <td>@Model.CheckLeaveRequestList[i].Status</td>
+                    <td>
+                        @switch (Model.CheckLeaveRequestList[i].Status)
+                        {
+                            case "Pending":
+                                <text>待審核</text>
+                                ; break;
+                            case "Approved":
+                                <text>已核准</text>
+                                ; break;
+                            case "Rejected":
+                                <text>已駁回</text>
+                                ; break;
+                            default:
+                                <text>未知狀態</text>
+                                ; break;
+                        }
+                    </td>
                     <td>@Model.CheckLeaveRequestList[i].ApproverId</td>
                     <td>
                         <form asp-controller="Leave" asp-action="EditLeaveRequestStatus" method="post" style="display:inline;">

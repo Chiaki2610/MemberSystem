@@ -18,7 +18,23 @@
             <tr>
                 <td>@item.ApprovalOrder</td>
                 <td>@item.FlowDescription</td>
-                <td>@item.ApprovalStatus</td>
+                <td>
+                    @switch (@item.ApprovalStatus)
+                    {
+                        case "Pending":
+                            <text>待審核</text>
+                            ; break;
+                        case "Approved":
+                            <text>已核准</text>
+                            ; break;
+                        case "Rejected":
+                            <text>已駁回</text>
+                            ; break;
+                        default:
+                            <text>未知狀態</text>
+                            ; break;
+                    }
+                </td>
                 <td>@item.ApprovalTime?.ToString("yyyy-MM-dd HH:mm:ss")</td>
                 <td>@item.ApproverName</td>
             </tr>

@@ -26,7 +26,23 @@
                     <td>@Model.ApprovalViewModelList[i].StartDate.ToString("yyyy-MM-dd-hh-mm-ss")</td>
                     <td>@Model.ApprovalViewModelList[i].EndDate.ToString("yyyy-MM-dd-hh-mm-ss")</td>
                     <td>@Model.ApprovalViewModelList[i].Reason</td>
-                    <td>@Model.ApprovalViewModelList[i].Status</td>
+                    <td>
+                        @switch (Model.ApprovalViewModelList[i].Status)
+                        {
+                            case "Pending":
+                                <text>待審核</text>
+                                ; break;
+                            case "Approved":
+                                <text>已核准</text>
+                                ; break;
+                            case "Rejected":
+                                <text>已駁回</text>
+                                ; break;
+                            default:
+                                <text>未知狀態</text>
+                                ; break;
+                        }
+                    </td>
                     <td>
                         <form asp-controller="leave" asp-action="GetApprovalFlow" method="post" style="display:inline;">
                             <input type="hidden" name="LeaveRequestId" value="@Model.ApprovalViewModelList[i].LeaveRequestId" />
