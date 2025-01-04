@@ -16,6 +16,7 @@ namespace MemberSystem.ApplicationCore.Services
     {
         private readonly IRepository<Member> _memberRepository;
         private readonly IRepository<ApprovalFlow> _approvalFlowRepository;
+        private readonly IRepository<LeaveType> _leaveTypeRepository;
         private readonly IRepository<LeaveBalance> _leaveBalanceRepository;
         private readonly IRepository<LeaveRequest> _leaveRequestRepository;
         private readonly IRepository<LeaveApproval> _leaveApprovalRepository;
@@ -32,7 +33,8 @@ namespace MemberSystem.ApplicationCore.Services
                             IRepository<MemberDepartment> memberDepartmentRepository,
                             IUserService userService,
                             ITransaction transaction,
-                            ILogger<LeaveService> logger)
+                            ILogger<LeaveService> logger,
+                            IRepository<LeaveType> leaveTypeRepository)
         {
             _memberRepository = memberRepository;
             _approvalFlowRepository = approvalFlowRepository;
@@ -43,23 +45,49 @@ namespace MemberSystem.ApplicationCore.Services
             _userService = userService;
             _transaction = transaction;
             _logger = logger;
+            _leaveTypeRepository = leaveTypeRepository;
         }
 
-        public async Task<LeaveBalanceDto> ViewLeaveBalanceAsync(int memberId, int leaveTypeId)
+        public async Task<bool> ViewLeaveBalanceAsync(LeaveRequestDto model)
         {
-            var leaveBalances = await _leaveBalanceRepository.FirstOrDefaultAsync
-                                (x => x.MemberId == memberId && x.LeaveTypeId == leaveTypeId);
-
-            _logger.LogInformation($"查得結果為{leaveBalances}");
-
-            var result = new LeaveBalanceDto
+            try
             {
-                MemberId = leaveBalances.MemberId,
-                LeaveTypeId = leaveBalances.LeaveTypeId,
-                Year = leaveBalances.Year,
-                RemainingDays = leaveBalances.RemainingDays,
-            };
-            return result;
+                _logger.LogInformation("開始進行天數驗證：{memberId}", model.MemberId);
+
+                // 計算當次請假天數
+                var requestedDays = (model.EndDate - model.StartDate).TotalDays + 1;
+
+                // 取得LeaveTypeID
+                var leaveRequest = await _leaveTypeRepository.FirstOrDefaultAsync(t => t.LeaveTypeName == model.LeaveType);
+
+                var leaveBalance = await _leaveBalanceRepository.FirstOrDefaultAsync
+                                    (x => x.MemberId == model.MemberId
+                                  && x.LeaveTypeId == leaveRequest.LeaveTypeId
+                                  && x.Year == DateTime.Now.Year);
+
+                if (leaveBalance == null)
+                {
+                    _logger.LogInformation($"找不到員工 {model.MemberId} 在假別 {leaveRequest.LeaveTypeId} 下的假別配額記錄");
+                }
+
+                _logger.LogInformation($"查得結果為{leaveBalance.MemberId}");
+
+                if (leaveBalance.RemainingDays < (decimal)requestedDays)
+                {
+                    return false;
+                }
+
+                leaveBalance.RemainingDays -= (decimal)requestedDays;
+                await _leaveBalanceRepository.UpdateAsync(leaveBalance);
+
+                _logger.LogInformation("使用者驗證成功，已扣除剩餘天數：{Username}", model.MemberId);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> SubmitLeaveRequestAsync(LeaveRequestDto model)
@@ -70,12 +98,12 @@ namespace MemberSystem.ApplicationCore.Services
                 await _transaction.BeginTransactionAsync();
 
                 // 驗證剩餘天數是否足夠的方法及判斷
-                //var leaveBalance = await ViewLeaveBalanceAsync(request.MemberId, request.LeaveTypeId);
-                //if (leaveBalance == null ||
-                //    leaveBalance.RemainingDays < Math.Round((decimal)(request.EndDate - request.StartDate).TotalDays, 2))
-                //{
-                //    _logger.LogWarning("假期餘額不足");
-                //}
+                var leaveBalance = await ViewLeaveBalanceAsync(model);
+                if (!leaveBalance)
+                {
+                    _logger.LogWarning("假期餘額不足");
+                    return false;
+                }
 
                 var leaveRequestEntity = new LeaveRequest
                 {
@@ -195,5 +223,7 @@ namespace MemberSystem.ApplicationCore.Services
 
             return result;
         }
+
+
     }
 }

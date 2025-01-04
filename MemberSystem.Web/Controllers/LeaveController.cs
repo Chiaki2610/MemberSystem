@@ -64,12 +64,19 @@ namespace MemberSystem.Web.Controllers
                     Reason = model.Reason
                 };
 
-                await _leaveService.SubmitLeaveRequestAsync(dto);
-
-                TempData["ToastType"] = "success";
-                TempData["ToastMessage"] = "申請成功，請等候審核結果；如欲查詢進度請利用「請假查詢」頁面，謝謝。";
-                return RedirectToAction("Index", "Home");
-
+                if (await _leaveService.SubmitLeaveRequestAsync(dto))
+                {
+                    TempData["ToastType"] = "success";
+                    TempData["ToastMessage"] = "申請成功，請等候審核結果；如欲查詢進度請利用「請假查詢」頁面，謝謝。";
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    _logger.LogError("申請失敗");
+                    TempData["ToastType"] = "error";
+                    TempData["ToastMessage"] = "申請失敗，請確認剩餘天數配額是否足夠。";
+                    return RedirectToAction("Index", "Leave");
+                }
             }
             catch (InvalidOperationException ex)
             {
