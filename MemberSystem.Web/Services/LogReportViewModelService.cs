@@ -14,7 +14,15 @@
 
         public async Task<List<LogReportViewModel>> GetLogReportAsync(LogReportViewModel model)
         {
-            var data = await _logRepository.ListAsync(d => d.LogTime >= model.StartDate && d.LogTime <= model.EndDate);
+            // 先把查詢條件描述出來但不會觸發執行，所以這邊不用加上await
+            var query = _logRepository.ListAsync(d =>
+                       d.LogTime >= model.StartDate &&
+                       d.LogTime <= model.EndDate &&
+                       (model.LogType == "all" || string.IsNullOrEmpty(model.LogType) || d.LogType == model.LogType)
+    );
+
+            var data = await query;
+
             var result = data.Select
                 (item => new LogReportViewModel
                 {

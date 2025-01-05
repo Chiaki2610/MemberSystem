@@ -19,9 +19,11 @@ namespace MemberSystem.ApplicationCore.Services
 {
     public class AccountService : IAccountService
     {
+        private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<Member> _memberRepository;
         private readonly IRepository<Department> _departmentRepository;
         private readonly IRepository<MemberDepartment> _memberDepartmentRepository;
+        private readonly IRepository<RolePermission> _rolePermissionRepository;
         private readonly ITransaction _transaction;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<AccountService> _logger;
@@ -32,7 +34,9 @@ namespace MemberSystem.ApplicationCore.Services
                            IHttpContextAccessor httpContextAccessor,
                            ILogger<AccountService> logger,
                            IRepository<MemberDepartment> memberDepartmentRepository,
-                           IRepository<Department> departmentRepository
+                           IRepository<Department> departmentRepository,
+                           IRepository<RolePermission> rolePermissionRepository,
+                           IRepository<Role> roleRepository
             //,IPermissionService permissionService
             )
         {
@@ -42,6 +46,8 @@ namespace MemberSystem.ApplicationCore.Services
             _logger = logger;
             _memberDepartmentRepository = memberDepartmentRepository;
             _departmentRepository = departmentRepository;
+            _rolePermissionRepository = rolePermissionRepository;
+            _roleRepository = roleRepository;
             //_permissionService = permissionService;
         }
 
@@ -147,10 +153,8 @@ namespace MemberSystem.ApplicationCore.Services
         /// <returns></returns>
         public async Task LoginUserAsync(LoginDto model, bool isPersistent = true)
         {
-            var roleName = (model.RoleId == 1) ? "Admin" : "User";
-
+            var role = await _roleRepository.FirstOrDefaultAsync(r => r.RoleId == model.RoleId);
             //var permissions = await _permissionService.GetPermissionsAsync(model.RoleId);
-
             var department = await _memberDepartmentRepository.FirstOrDefaultAsync(d => d.MemberId == model.MemberId);
             var departmentName = await _departmentRepository.FirstOrDefaultAsync(dn => dn.DepartmentId == department.DepartmentId);
 
@@ -159,11 +163,10 @@ namespace MemberSystem.ApplicationCore.Services
                 new Claim(ClaimTypes.Name, model.FullName),
                 new Claim(ClaimTypes.NameIdentifier, model.MemberId.ToString()),
                 new Claim("IsApproved", model.IsApproved.HasValue && model.IsApproved.Value ? "true" : "false"),
-                new Claim(ClaimTypes.Role, roleName),
-                // 為了Logs的RelatedSystem欄位設定Department的Claim
-                new Claim("Department", departmentName.DepartmentName ?? "Unknown") // 如果DepartmentName為null則存"Unknown"
+                new Claim(ClaimTypes.Role, role.RoleName),
+                // 為了Logs的RelatedSystem欄位設定Department的Claim；如果DepartmentName為null則存"Unknown"
+                new Claim("Department", departmentName.DepartmentName ?? "Unknown"),
                 // new Claim("Permissions", string.Join(",", permissions))
-
             };
 
             var authProperties = new AuthenticationProperties

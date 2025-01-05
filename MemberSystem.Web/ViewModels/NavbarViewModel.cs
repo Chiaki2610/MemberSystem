@@ -2,7 +2,7 @@
 {
     public class NavbarViewModel
     {
-        public bool IsAdmin { get; set; }
+        public string RoleName { get; set; }
         public bool IsAuthenticated { get; set; }
     }
 }

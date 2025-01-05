@@ -21,6 +21,7 @@ namespace MemberSystem.Web.Controllers
             _logger = logger;
         }
 
+        // 請假報表查詢首頁
         public IActionResult Index()
         {
             var model = new LeaveReportViewModel();
@@ -48,13 +49,14 @@ namespace MemberSystem.Web.Controllers
             }
         }
 
+        // 請假報表查詢結果頁
         [HttpGet]
         public async Task<IActionResult> LeaveReport(List<LeaveReportViewModel> model)
         {
             return View(model);
         }
 
-
+        // Log報表查詢首頁
         [HttpGet]
         public async Task<IActionResult> LogReport()
         {
@@ -87,6 +89,7 @@ namespace MemberSystem.Web.Controllers
             }
         }
 
+        // Log報表查詢結果頁
         [HttpGet]
         public async Task<IActionResult> ViewLogReport()
         {
