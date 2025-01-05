@@ -20,6 +20,8 @@ namespace MemberSystem.ApplicationCore.Services
     public class AccountService : IAccountService
     {
         private readonly IRepository<Member> _memberRepository;
+        private readonly IRepository<Department> _departmentRepository;
+        private readonly IRepository<MemberDepartment> _memberDepartmentRepository;
         private readonly ITransaction _transaction;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<AccountService> _logger;
@@ -28,7 +30,9 @@ namespace MemberSystem.ApplicationCore.Services
         public AccountService(IRepository<Member> memberRepository,
                            ITransaction transaction,
                            IHttpContextAccessor httpContextAccessor,
-                           ILogger<AccountService> logger
+                           ILogger<AccountService> logger,
+                           IRepository<MemberDepartment> memberDepartmentRepository,
+                           IRepository<Department> departmentRepository
             //,IPermissionService permissionService
             )
         {
@@ -36,6 +40,8 @@ namespace MemberSystem.ApplicationCore.Services
             _transaction = transaction;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _memberDepartmentRepository = memberDepartmentRepository;
+            _departmentRepository = departmentRepository;
             //_permissionService = permissionService;
         }
 
@@ -145,13 +151,19 @@ namespace MemberSystem.ApplicationCore.Services
 
             //var permissions = await _permissionService.GetPermissionsAsync(model.RoleId);
 
+            var department = await _memberDepartmentRepository.FirstOrDefaultAsync(d => d.MemberId == model.MemberId);
+            var departmentName = await _departmentRepository.FirstOrDefaultAsync(dn => dn.DepartmentId == department.DepartmentId);
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, model.FullName),
                 new Claim(ClaimTypes.NameIdentifier, model.MemberId.ToString()),
                 new Claim("IsApproved", model.IsApproved.HasValue && model.IsApproved.Value ? "true" : "false"),
                 new Claim(ClaimTypes.Role, roleName),
-               // new Claim("Permissions", string.Join(",", permissions))
+                // 為了Logs的RelatedSystem欄位設定Department的Claim
+                new Claim("Department", departmentName.DepartmentName ?? "Unknown") // 如果DepartmentName為null則存"Unknown"
+                // new Claim("Permissions", string.Join(",", permissions))
+
             };
 
             var authProperties = new AuthenticationProperties

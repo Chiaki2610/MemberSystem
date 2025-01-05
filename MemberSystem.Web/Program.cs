@@ -14,18 +14,19 @@ namespace MemberSystem.Web
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            // 註冊IHttpContextAccessor
+            builder.Services.AddHttpContextAccessor();
+
             // Web的DI移至Configurations資料夾內的兩支檔案
             // ConfigureApplicationCoreService -> for 非Web專案內的DI
             // ConfigureWebService -> for Web專案內的DI
             builder.Services.AddApplicationCoreService().AddWebService();
             builder.Services.AddInfrastructureService(builder.Configuration);
 
-            // 自訂LoggerProvider設定
+            // 自訂LoggerProvider設定(抽到Infrastructure.Logging)
             builder.Logging.ClearProviders();
-            builder.Logging.AddProvider(new DatabaseLoggerProvider(
-                logLevel => logLevel >= LogLevel.Information,
-                builder.Services.BuildServiceProvider()
-            ));
+            builder.Logging.AddDatabaseLogger(builder.Services);
+
 
             // 為了處理報表匯成Excel時的資料量設置Session緩存機制
             builder.Services.AddDistributedMemoryCache(); //需要內存支持功能
@@ -50,8 +51,6 @@ namespace MemberSystem.Web
                        options.AccessDeniedPath = "/Account/Login";
                    });
 
-            builder.Services.AddHttpContextAccessor();
-
             // 註冊自訂授權處理器
             builder.Services.AddAuthorization(options =>
             {
@@ -59,7 +58,6 @@ namespace MemberSystem.Web
             });
 
             builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
-
 
             // 1.取得組態中資料庫連線設定
             string connectionString = builder.Configuration.GetConnectionString("MemberSystemContext");
